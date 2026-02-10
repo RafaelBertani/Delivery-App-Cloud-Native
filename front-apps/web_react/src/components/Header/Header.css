@@ -1,0 +1,54 @@
+.header {
+  background-color: rgb(174, 10, 10);
+  color: white;
+  padding: 16px;
+  display: flex;
+  float: left;
+  position: absolute;
+  gap: 16px;  
+  height: 130px;
+  width: 100%;
+}
+
+.logo {
+  position: relative;
+  width: 20%;
+  height: auto;
+  left: 40%;
+  margin-right: auto;
+}
+
+.header-buttons {
+  top: -10px;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.btn {
+  padding: 8px 8px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.btn.login {
+  background-color: white;
+  color: rgb(188, 86, 17);
+}
+
+.btn.login:hover {
+  background-color: #f0f0f0;
+}
+
+.btn.signup {
+  background-color: #ffd2a6;
+  color: rgb(188, 86, 17);
+}
+
+.btn.signup:hover {
+  background-color: #ffc28c;
+}

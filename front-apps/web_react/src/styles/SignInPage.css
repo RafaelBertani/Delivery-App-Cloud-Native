@@ -1,0 +1,75 @@
+.container {
+  position: relative;
+  top: 160px;
+  align-items: center;
+  background-color: transparent;
+}
+
+.box {
+  position: relative;
+  top: 0px;
+  background-color: rgb(213, 153, 153);
+  padding: 40px;
+  border-radius: 10px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.box h1 {
+  text-align: center;
+  color: white;
+}
+
+.box input {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  outline: none;
+}
+
+.box button {
+  padding: 10px;
+  background-color: rgb(179, 72, 72);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.box button:hover {
+  background-color: rgb(150, 50, 50);
+}
+
+.box p {
+  text-align: center;
+  color: white;
+  font-size: 14px;
+}
+
+.box a {
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.box a:hover {
+  text-decoration: underline;
+}
+
+.back-home {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  background-color: rgb(179, 72, 72);
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+.back-home:hover {
+  background-color: rgb(150, 50, 50);
+}

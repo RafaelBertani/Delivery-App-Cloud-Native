@@ -1,0 +1,12 @@
+.options{
+  position: relative;
+  top: 130px;
+  background-color: rgb(213, 153, 153) !important;
+}
+.btn:hover{
+  background-color: rgb(179, 72, 72) !important;
+}
+.btn{
+  margin: 0 36px;
+  background-color: brown !important;
+}
