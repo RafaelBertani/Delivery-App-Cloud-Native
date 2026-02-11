@@ -59,7 +59,7 @@ secrets:
     external: true
   postgres_password:
     external: true
-  postgres_db:
+  postgres_db_delivery:
     external: true
   rabbitmq_user:
     external: true

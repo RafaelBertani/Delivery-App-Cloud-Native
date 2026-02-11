@@ -41,7 +41,7 @@ create_secret jwt_secret "$JWT_SECRET"
 
 create_secret postgres_user "$POSTGRES_USER"
 create_secret postgres_password "$POSTGRES_PASSWORD"
-create_secret postgres_db "$POSTGRES_DB"
+create_secret postgres_db_delivery "$POSTGRES_DB"
 
 create_secret rabbitmq_user "$RABBITMQ_USER"
 create_secret rabbitmq_password "$RABBITMQ_PASSWORD"
