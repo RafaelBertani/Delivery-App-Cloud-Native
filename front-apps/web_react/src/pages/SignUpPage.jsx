@@ -51,9 +51,6 @@ export default function SignUpPage() {
     e.preventDefault();
     setError('');
 
-    e.preventDefault();
-    setError('');
-
     const formData = {
       name,
       email,

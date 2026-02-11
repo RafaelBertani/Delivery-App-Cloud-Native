@@ -1,0 +1,75 @@
+version: "3.8"
+
+services:
+  auth-service:
+    image: auth-service:latest
+    ports:
+      - "3001:3001"
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      JWT_SECRET_KEY_FILE: /run/secrets/jwt_secret
+      RABBITMQ_USER_FILE: /run/secrets/rabbitmq_user
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
+    secrets:
+      - jwt_secret
+      - rabbitmq_user
+      - rabbitmq_password
+    depends_on:
+      - rabbitmq
+      - postgres
+    deploy:
+      restart_policy:
+        condition: on-failure
+    networks:
+      - backend_network
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - backend_network
+
+  postgres:
+    image: postgres:17.4
+    environment:
+      POSTGRES_USER_FILE: /run/secrets/postgres_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_DB_FILE: /run/secrets/postgres_db_delivery
+    secrets:
+      - postgres_user
+      - postgres_password
+      - postgres_db_delivery
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend_network
+
+secrets:
+  jwt_secret:
+    external: true
+  postgres_user:
+    external: true
+  postgres_password:
+    external: true
+  postgres_db:
+    external: true
+  rabbitmq_user:
+    external: true
+  rabbitmq_password:
+    external: true
+
+networks:
+  backend_network:
+    driver: overlay
+
+volumes:
+  postgres_data:
+    driver: local
