@@ -72,7 +72,7 @@ export default function SignUpPage() {
     try {
       await axios.post('http://localhost:3001/api/auth/signup', formData );
       alert('Cadastro realizado com sucesso!');
-      navigate('/signin');
+      goToSignIn(); //navigate('/signin');
     } catch (error) {
       if (error.response?.data?.error) {
         setError(error.response.data.error);
