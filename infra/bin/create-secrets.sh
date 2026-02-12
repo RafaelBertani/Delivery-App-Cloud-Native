@@ -1,11 +1,11 @@
 # ===============================
 # CONFIGURAÇÃO DE VARIÁVEIS (cabeçalho)
 # ===============================
-JWT_SECRET=""
+JWT_SECRET="ifthispasswordwentonlineifailed"
 
-POSTGRES_USER=""
-POSTGRES_PASSWORD=""
-POSTGRES_DB=""
+POSTGRES_USER="postgres"
+POSTGRES_PASSWORD="db#1post"
+POSTGRES_DB="postgres_db_delivery"
 
 # RABBITMQ_USER="guest"
 # RABBITMQ_PASSWORD="guest"

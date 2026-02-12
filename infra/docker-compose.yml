@@ -15,6 +15,9 @@ services:
       - jwt_secret
       - rabbitmq_user
       - rabbitmq_password
+      - postgres_user
+      - postgres_password
+      - postgres_db_delivery
     depends_on:
       - rabbitmq
       - postgres

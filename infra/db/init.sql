@@ -11,12 +11,11 @@ CREATE TABLE users (
   password VARCHAR(255) NOT NULL,
   profile_pic BYTEA,
   joined_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  phone VARCHAR(20) NOT NULL,
   is_account_active BOOLEAN DEFAULT TRUE,
-  role VARCHAR(10) CHECK (role IN ('ADM', 'USER', 'DELIVERY'))
+  role VARCHAR(10) CHECK (role IN ('ADM', 'USER')),
+  is_delivery BOOLEAN DEFAULT FALSE,
+  has_restaurant BOOLEAN DEFAULT FALSE
 );
-
-CREATE INDEX idx_users_role ON users(current_role);
 
 CREATE TABLE addresses (
   id SERIAL PRIMARY KEY,
@@ -33,14 +32,71 @@ CREATE UNIQUE INDEX one_active_address_per_user
 ON addresses(user_id)
 WHERE is_active = TRUE;
 
+CREATE TABLE restaurants (
+  id SERIAL PRIMARY KEY,
+  owner_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+
+  name VARCHAR(150) NOT NULL,
+  description TEXT,
+  logo BYTEA,
+
+  is_active BOOLEAN DEFAULT TRUE,
+  is_open BOOLEAN DEFAULT TRUE,
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  street VARCHAR(255),
+  city VARCHAR(100),
+  state VARCHAR(50),
+  zip_code VARCHAR(20),
+  country VARCHAR(50) DEFAULT 'Brasil'
+
+);
+
 CREATE TABLE orders (
   id SERIAL PRIMARY KEY,
-  user_id INT REFERENCES users(id) ON DELETE CASCADE,
+
+  user_id INT NOT NULL
+    REFERENCES users(id) ON DELETE CASCADE,
+
+  restaurant_id INT NOT NULL
+    REFERENCES restaurants(id) ON DELETE RESTRICT,
+
   total_amount DECIMAL(10,2) NOT NULL,
+
   status VARCHAR(20)
-    CHECK (status IN ('PENDING','PREPARING','DELIVERING','DELIVERED','CANCELLED')),
+    CHECK (
+      status IN (
+        'PENDING',
+        'PREPARING',
+        'DELIVERING',
+        'DELIVERED',
+        'CANCELLED'
+      )
+    ),
+
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP
+);
+
+CREATE TABLE dishes (
+  id SERIAL PRIMARY KEY,
+  restaurant_id INT REFERENCES restaurants(id) ON DELETE CASCADE,
+
+  name VARCHAR(150) NOT NULL,
+  description TEXT,
+  price DECIMAL(10,2) NOT NULL,
+  image BYTEA,
+
+  is_available BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE order_items (
+  id SERIAL PRIMARY KEY,
+  order_id INT REFERENCES orders(id) ON DELETE CASCADE,
+  dish_id INT REFERENCES dishes(id),
+  quantity INT NOT NULL,
+  unit_price DECIMAL(10,2) NOT NULL
 );
 
 CREATE TABLE payment_cards (
@@ -86,6 +142,8 @@ BEFORE UPDATE ON orders
 FOR EACH ROW
 EXECUTE FUNCTION set_updated_at();
 
+CREATE INDEX idx_orders_restaurant ON orders(restaurant_id);
+CREATE INDEX idx_orders_status ON orders(status);
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_orders_user ON orders(user_id);
 CREATE INDEX idx_deliveries_status ON deliveries(status);

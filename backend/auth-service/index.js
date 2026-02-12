@@ -10,6 +10,6 @@ app.use(express.json());
 
 app.use('/api/auth', routes);
 
-app.listen(PORT, 'localhost', () => {
-  console.log(`UserService is running on http://127.0.0.1:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`UserService is running on http://0.0.0.0:${PORT}`);
 });
