@@ -1,6 +1,6 @@
 import "../styles/SignInPage.css";
 import { useNavigate } from 'react-router-dom';
-import {useState} from 'react';
+import { useState } from 'react';
 import Joi from 'joi';
 import axios from 'axios';
 
@@ -53,16 +53,30 @@ export default function SignInPage() {
     console.log('Dados válidos:', formData);
 
     try {
-      await axios.post('http://localhost:3001/api/auth/signin', formData );
+      const response = await axios.post(
+        'http://localhost:3001/api/auth/signin',
+        formData
+      );
+
+      const { token, user } = response.data;
+
+      // 🔐 salva token
+      localStorage.setItem('token', token);
+
+      // (opcional) salva usuário
+      localStorage.setItem('user', JSON.stringify(user));
+
       alert('Login realizado com sucesso!');
-      goToHome(); //navigate('/');
+      goToHome();
+
     } catch (error) {
-      if (error.response?.data?.error) {
-        setError(error.response.data.error);
+      if (error.response?.data?.message) {
+        setError(error.response.data.message);
       } else {
         setError('Erro no Login. Tente novamente.');
       }
     }
+    
   }
 
   return (

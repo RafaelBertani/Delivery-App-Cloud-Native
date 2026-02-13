@@ -4,6 +4,8 @@ const Joi = require('joi');
 const registerSchema = require('../validations/register.schema.js');
 const loginSchema = require('../validations/login.schema.js');
 const userService = require('../services/auth.service.js');
+const { getSecret } = require('../middlewares/authMiddleware');
+const jwt = require('jsonwebtoken');
 
 async function signup(req, res) {
   const { name, email, password, confirmPassword } = req.body;
@@ -62,12 +64,29 @@ async function signin(req, res) {
     });
 
     if (result.error) {
-      return res.status(400).json({ message: result.error });
+      return res.status(401).json({ message: result.error });
     }
+
+    const user = result.user;
+
+    // Payload mínimo e seguro
+    const payload = {
+      sub: user.id,
+      role: user.role,
+      is_delivery: user.is_delivery,
+      has_restaurant: user.has_restaurant
+    };
+
+    const token = jwt.sign(
+      payload,
+      getSecret('jwt_secret'),
+      { expiresIn: process.env.JWT_EXPIRES_IN || '1d' }
+    );
 
     return res.status(200).json({
       message: 'User logged in successfully',
-      user: result.user
+      token,
+      user
     });
 
   } catch (err) {
@@ -76,7 +95,15 @@ async function signin(req, res) {
   }
 };
 
+async function me(req, res) {
+  // req.user vem do authMiddleware (payload do JWT)
+  return res.status(200).json({
+    user: req.user
+  });
+};
+
 module.exports = {
     signup,
-    signin
+    signin,
+    me
 };

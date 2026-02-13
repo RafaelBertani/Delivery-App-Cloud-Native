@@ -1,5 +1,7 @@
 const { Router } = require("express");
 const controller = require('../controllers/controllers');
+const { authMiddleware } = require('../middlewares/authMiddleware');
+
 const router = Router();
 
 router.get("/", (req, res) => {
@@ -11,8 +13,18 @@ router.get('/status', (req, res) => {
   res.json({ status: getStatus(code) });
 });
 
+// 🔓 Públicas
 router.post('/signup', controller.signup);
 router.post('/signin', controller.signin);
+
+// 🔐 Protegidas
+router.get('/me', authMiddleware, controller.me);
+router.get('/private', authMiddleware, (req, res) => {
+  res.json({
+    message: 'Access granted',
+    user: req.user
+  });
+});
 
 // router.get('/', controller.getUsers);
 // router.post('/', controller.createUser);
