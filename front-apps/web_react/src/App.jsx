@@ -13,6 +13,7 @@ import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
+import RestaurantsPage from "./pages/RestaurantsPage";
 
 function App() {
 
@@ -49,6 +50,8 @@ function App() {
             <Route path="/signUp" element={<SignUpPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/restaurants" element={<RestaurantsPage />} />
+            <Route path="/restaurants/:cod" element={< span />} />
             {/* <Route path="/home" element={<LockSelectPage />} />
             <Route path="/home/:cod" element={<HomePage />} />
             <Route path="/lock-control" element={<LockControlPage />} />

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from '../contexts/AuthContext'; // Importe seu contexto
+import { useAuth } from '../contexts/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function SettingsPage() {
   const navigate = useNavigate();
-  const { user, updateUserProfile } = useAuth(); // Pegamos o user e a função de update do contexto
+  const { user, updateUserProfile } = useAuth();
   const [loading, setLoading] = useState(false);
   
   // Estado local apenas para o Modo Noturno (exemplo visual)

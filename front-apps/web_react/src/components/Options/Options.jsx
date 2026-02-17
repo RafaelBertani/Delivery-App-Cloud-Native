@@ -15,6 +15,10 @@ const Options = () => {
   function goToSettings() {
     navigate('/settings');
   }
+
+  function goToRestaurants(){
+    navigate('/restaurants');
+  }
   
   // Se o contexto ainda estiver carregando, pode retornar null ou carregar normal
   // if (!user) return null; 
@@ -38,7 +42,7 @@ const Options = () => {
       )}
       
       {user?.has_restaurant && (
-        <a href="#" className="btn btn-primary me-2">
+        <a href="#" className="btn btn-primary me-2" onClick={goToRestaurants}>
           <i className="fas fa-store"></i> Meus Restaurantes
         </a>
       )}
