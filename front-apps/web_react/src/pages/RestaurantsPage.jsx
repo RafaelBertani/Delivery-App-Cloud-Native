@@ -36,12 +36,13 @@ export default function RestaurantsPage() {
 
   async function fetchRestaurants() {
     const token = localStorage.getItem('token');
-    if (!token) return;
+
+    if (!user || !token) return;
 
     try {
       setLoadingList(true);
-      // Ajuste a rota conforme seu backend
-      const response = await axios.get('http://localhost:3001/api/restaurants', {
+      const response = await axios.get('http://localhost:3001/api/restaurants/list', {
+        params: { id: user.id },
         headers: { Authorization: `Bearer ${token}` }
       });
       setRestaurants(response.data);
@@ -86,7 +87,7 @@ export default function RestaurantsPage() {
 
     try {
       setCreating(true);
-      await axios.post('http://localhost:3001/api/restaurants', {id: user.id, ...formData}, {
+      await axios.post('http://localhost:3001/api/restaurants/new', {id: user.id, ...formData}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
