@@ -16,6 +16,7 @@ router.get('/status', (req, res) => {
 // 🔓 Públicas
 router.post('/signup', controller.signup);
 router.post('/signin', controller.signin);
+router.put('/edit', authMiddleware, controller.editUser);
 
 // 🔐 Protegidas
 router.get('/me', authMiddleware, controller.me);

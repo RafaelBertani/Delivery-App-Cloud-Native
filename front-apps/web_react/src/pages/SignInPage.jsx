@@ -3,8 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Joi from 'joi';
 import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function SignInPage() {
+
+  const { signIn } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -60,10 +63,9 @@ export default function SignInPage() {
 
       const { token, user } = response.data;
 
-      // 🔐 salva token
+      signIn(user, token);
+      
       localStorage.setItem('token', token);
-
-      // (opcional) salva usuário
       localStorage.setItem('user', JSON.stringify(user));
 
       alert('Login realizado com sucesso!');

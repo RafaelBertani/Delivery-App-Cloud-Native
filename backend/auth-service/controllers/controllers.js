@@ -102,8 +102,38 @@ async function me(req, res) {
   });
 };
 
+async function editUser(req, res) {
+  try {
+    const userId = req.user.sub;
+    
+    const updates = req.body;
+
+    // não está vazio
+    if (!updates || Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: 'No data provided for update.' });
+    }
+
+    // Chama o service
+    const result = await userService.updateUser(userId, updates);
+
+    return res.status(200).json({
+      message: 'Profile updated successfully',
+      user: result.user
+    });
+
+  } catch (err) {
+    console.error(err);
+    // Tratamento de erro para e-mail duplicado (código 23505 no Postgres)
+    if (err.code === '23505') {
+       return res.status(409).json({ message: 'Email already in use.' });
+    }
+    return res.status(500).json({ message: 'Error updating profile.' });
+  }
+};
+
 module.exports = {
     signup,
     signin,
-    me
+    me,
+    editUser
 };
