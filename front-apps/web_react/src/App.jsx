@@ -15,6 +15,7 @@ import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
 import RestaurantsPage from "./pages/RestaurantsPage";
 import ManageRestaurantPage from "./pages/ManageRestaurantPage";
+import DishesPage from './pages/DishesPage';
 
 function App() {
 
@@ -51,9 +52,10 @@ function App() {
             <Route path="/signUp" element={<SignUpPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/restaurants" element={<RestaurantsPage />} />
+            <Route path="/my-restaurants" element={<RestaurantsPage />} />
 
-            <Route path="/restaurants/:id/settings" element={<ManageRestaurantPage />} />
+            <Route path="/my-restaurants/:id/settings" element={<ManageRestaurantPage />} />
+            <Route path="/my-restaurants/:id/edit-menu" element={<DishesPage />} />
           </Routes>
         </main>
         {/* <Footer className="mt-auto"/> */}

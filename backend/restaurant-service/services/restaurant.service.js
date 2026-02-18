@@ -125,8 +125,23 @@ async function updateRestaurant(restaurantId, ownerId, updates) {
   }
 };
 
+async function findByIdAndOwner(id, ownerId) {
+  const query = `
+    SELECT * FROM restaurants 
+    WHERE id = $1 AND owner_id = $2
+  `;
+
+  try {
+    const res = await pool.query(query, [id, ownerId]);
+    return res.rows[0]; // Retorna o objeto ou undefined se não achar
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   findByOwnerId,
   createNew,
-  updateRestaurant
+  updateRestaurant,
+  findByIdAndOwner
 };

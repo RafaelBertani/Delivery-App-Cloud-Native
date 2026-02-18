@@ -1,3 +1,4 @@
+import "../styles/ManageRestaurantPage.css";
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -5,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const DEFAULT_LOGO = "https://cdn-icons-png.flaticon.com/512/1046/1046784.png";
 
-export default function EditRestaurantPage() {
+export default function ManageRestaurantPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   
@@ -34,10 +35,10 @@ export default function EditRestaurantPage() {
     
     async function fetchData() {
       const token = localStorage.getItem('token');
-      if (!token) { navigate(`/restaurants/${id}`); return; }
+      if (!token) { navigate(`/my-restaurants/${id}`); return; }
 
       try {
-        const response = await axios.get(`http://localhost:3002/api/restaurants/${id}`, {
+        const response = await axios.get(`http://localhost:3002/api/restaurants/${id}/settings`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -113,13 +114,13 @@ export default function EditRestaurantPage() {
     try {
       setSaving(true);
       
-      await axios.patch(`http://localhost:3002/api/restaurants/${id}`, 
+      await axios.patch(`http://localhost:3002/api/restaurants/${id}/settings`, 
         formData, 
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       alert("Dados atualizados com sucesso!");
-      navigate(`/restaurants/${id}`);
+      navigate(`/my-restaurants`);
 
     } catch (err) {
       console.error(err);
@@ -134,12 +135,25 @@ export default function EditRestaurantPage() {
   return (
     <div className="container mt-4 mb-5" style={{ maxWidth: '800px' }}>
       
-      {/* Cabeçalho */}
-      <div className="d-flex align-items-center mb-4">
-        <button className="btn btn-outline-secondary me-3" onClick={() => navigate(`/restaurants/${id}`)}>
-          <i className="fas fa-arrow-left"></i> Voltar
+      {/* --- CABEÇALHO ALTERADO --- */}
+      <div className="d-flex align-items-center justify-content-between mb-4">
+        
+        {/* Lado Esquerdo: Voltar + Título */}
+        <div className="d-flex align-items-center">
+          <button className="btn btn-outline-secondary me-3" onClick={() => navigate(`/my-restaurants`)}>
+            <i className="fas fa-arrow-left"></i> Voltar
+          </button>
+          <h3 className="fw-bold mb-0">Editar Dados</h3>
+        </div>
+
+        {/* Lado Direito: BOTÃO NOVO (Gerenciar Pratos) */}
+        <button 
+          className="btn btn-primary shadow-sm" 
+          onClick={() => navigate(`/my-restaurants/${id}/edit-menu`)}
+        >
+          <i className="fas fa-utensils me-2"></i> Pratos
         </button>
-        <h3 className="fw-bold mb-0">Editar Dados do Restaurante</h3>
+
       </div>
 
       {error && <div className="alert alert-danger">{error}</div>}
@@ -238,7 +252,7 @@ export default function EditRestaurantPage() {
 
         {/* Botões de Ação */}
         <div className="d-flex justify-content-end gap-3 mb-5">
-          <button type="button" className="btn btn-secondary px-4" onClick={() => navigate(`/restaurants/${id}`)}>
+          <button type="button" className="btn btn-secondary px-4" onClick={() => navigate(`/my-restaurants/`)}>
             Cancelar
           </button>
           <button type="submit" className="btn btn-success px-5 fw-bold" disabled={saving}>

@@ -95,8 +95,34 @@ async function manageRestaurant (req, res) {
   }
 };
 
+async function getRestaurantById (req, res) {
+  try {
+    const userId = req.user.sub;
+    const { id } = req.params;
+
+    // Busca no service
+    const restaurant = await restaurantService.findByIdAndOwner(id, userId);
+
+    if (!restaurant) {
+      return res.status(404).json({ message: 'Restaurante não encontrado ou acesso negado.' });
+    }
+
+    // Se tiver imagem Buffer (BYTEA), converte para Base64 para o front exibir
+    if (restaurant.logo) {
+        restaurant.logo = `data:image/png;base64,${restaurant.logo.toString('base64')}`;
+    }
+
+    return res.status(200).json(restaurant);
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Erro ao buscar restaurante.' });
+  }
+};
+
 module.exports = {
     listRestaurants,
     createRestaurant,
-    manageRestaurant
+    manageRestaurant,
+    getRestaurantById
 };

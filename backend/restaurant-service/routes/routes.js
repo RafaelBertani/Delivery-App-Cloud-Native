@@ -19,5 +19,6 @@ router.get('/status', (req, res) => {
 router.post('/new', authMiddleware, controller.createRestaurant);
 router.get('/list', authMiddleware, controller.listRestaurants);
 router.patch('/:id/settings', authMiddleware, controller.manageRestaurant);
+router.get('/:id/settings', authMiddleware, controller.getRestaurantById);
 
 module.exports = router;
