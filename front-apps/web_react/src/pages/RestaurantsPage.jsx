@@ -29,6 +29,10 @@ export default function RestaurantsPage() {
     logo: '' // Será base64
   });
 
+  function goToManage(id) {
+    navigate(`/restaurants/${id}/settings`);
+  }
+
   // 1. Carregar restaurantes ao abrir a página
   useEffect(() => {
     if (user) {
@@ -206,22 +210,38 @@ export default function RestaurantsPage() {
 
       <div className="d-flex flex-column gap-3">
         {!loadingList && restaurants.map((rest) => (
-          <div key={rest.id} className="card shadow-sm border-start border-4 border-primary">
+          <div 
+            key={rest.id}
+            className={`card shadow-sm border-start border-4 mb-3 ${rest.is_open ? 'border-success' : 'border-secondary'}`}
+          >
             <div className="card-body d-flex align-items-center flex-wrap">
               
               {/* Imagem */}
-              <div className="me-4">
+              <div className="me-4 position-relative">
                 <img 
                   src={rest.logo || DEFAULT_LOGO} 
                   alt={rest.name} 
-                  className="rounded"
+                  className={`rounded ${!rest.is_open ? 'opacity-50' : ''}`} // Deixa a logo meio apagada se fechado
                   style={{ width: '80px', height: '80px', objectFit: 'cover' }}
                 />
               </div>
 
               {/* Informações */}
               <div className="flex-grow-1">
-                <h5 className="fw-bold mb-1">{rest.name}</h5>
+                <div className="d-flex align-items-center mb-1">
+                  <h5 className="fw-bold mb-0 me-2">{rest.name}</h5>
+                  
+                  {rest.is_open ? (
+                    <span className="badge bg-success rounded-pill" style={{ fontSize: '0.7rem' }}>
+                      <i className="fas fa-check-circle me-1"></i>ABERTO
+                    </span>
+                  ) : (
+                    <span className="badge bg-secondary rounded-pill" style={{ fontSize: '0.7rem' }}>
+                      <i className="fas fa-lock me-1"></i>FECHADO
+                    </span>
+                  )}
+                </div>
+
                 <p className="text-muted small mb-1">
                   {rest.description ? rest.description.substring(0, 60) + '...' : 'Sem descrição'}
                 </p>
@@ -233,7 +253,7 @@ export default function RestaurantsPage() {
 
               {/* Botão de Ação */}
               <div className="mt-3 mt-md-0">
-                <button className="btn btn-outline-primary" onClick={() => alert(`Gerenciar ID: ${rest.id}`)}>
+                <button className="btn btn-outline-primary" onClick={() => goToManage(rest.id)}>
                   <i className="fas fa-cog me-1"></i> GERENCIAR
                 </button>
               </div>

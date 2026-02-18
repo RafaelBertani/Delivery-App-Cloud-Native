@@ -14,6 +14,7 @@ import SignUpPage from "./pages/SignUpPage";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
 import RestaurantsPage from "./pages/RestaurantsPage";
+import ManageRestaurantPage from "./pages/ManageRestaurantPage";
 
 function App() {
 
@@ -51,14 +52,8 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/restaurants" element={<RestaurantsPage />} />
-            <Route path="/restaurants/:cod" element={< span />} />
-            {/* <Route path="/home" element={<LockSelectPage />} />
-            <Route path="/home/:cod" element={<HomePage />} />
-            <Route path="/lock-control" element={<LockControlPage />} />
-            <Route path="/register-lock" element={<RegisterLockPage />} />
-            <Route path="/join-lock" element={<JoinLockPage />} />
-            <Route path="/logs" element={<LogsPage />} />
-            <Route path="/users" element={<UsersPage />} /> */}
+
+            <Route path="/restaurants/:id/settings" element={<ManageRestaurantPage />} />
           </Routes>
         </main>
         {/* <Footer className="mt-auto"/> */}
