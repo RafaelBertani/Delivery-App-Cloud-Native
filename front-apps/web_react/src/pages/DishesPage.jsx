@@ -41,9 +41,10 @@ export default function DishesPage() {
 
       try {
         // CORRIGIDO: /api/restaurants/:id/list-dishes
-        const response = await axios.get(`http://localhost:3002/api/restaurants/${restaurantId}/list-dishes`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        // const response = await axios.get(`http://localhost:3002/api/restaurants/${restaurantId}/list-dishes`, {
+        //   headers: { Authorization: `Bearer ${token}` }
+        // });
+        const response = await axios.get(`http://localhost:3002/api/restaurants/${restaurantId}/list-dishes`);
         if (isMounted) {
           setDishes(response.data);
           setLoading(false);
@@ -107,9 +108,10 @@ export default function DishesPage() {
       }
 
       // Recarrega a lista usando a rota de listagem corrigida
-      const res = await axios.get(`http://localhost:3002/api/restaurants/${restaurantId}/list-dishes`, {
-          headers: { Authorization: `Bearer ${token}` }
-      });
+    //   const res = await axios.get(`http://localhost:3002/api/restaurants/${restaurantId}/list-dishes`, {
+    //       headers: { Authorization: `Bearer ${token}` }
+    //   });
+      const res = await axios.get(`http://localhost:3002/api/restaurants/${restaurantId}/list-dishes`);
       setDishes(res.data);
       resetForm();
 

@@ -1,5 +1,6 @@
 const { Router } = require("express");
-const controller = require('../controllers/controllers');
+const restaurantController = require('../controllers/restaurantControllers');
+const dishController = require('../controllers/dishControllers');
 const { authMiddleware } = require('../middlewares/authMiddleware');
 
 const router = Router();
@@ -12,13 +13,17 @@ router.get('/status', (req, res) => {
   const { code } = req.query;
   res.json({ status: getStatus(code) });
 });
-// 🔓 Públicas
 
+// 🔓 Públicas
+router.get('/:id/list-dishes', dishController.listDishes);
 
 // 🔐 Protegidas
-router.post('/new', authMiddleware, controller.createRestaurant);
-router.get('/list', authMiddleware, controller.listRestaurants);
-router.patch('/:id/settings', authMiddleware, controller.manageRestaurant);
-router.get('/:id/settings', authMiddleware, controller.getRestaurantById);
+router.post('/new', authMiddleware, restaurantController.createRestaurant);
+router.get('/list', authMiddleware, restaurantController.listRestaurants);
+router.patch('/:id/settings', authMiddleware, restaurantController.manageRestaurant);
+router.get('/:id/settings', authMiddleware, restaurantController.getRestaurantById);
+router.post('/:id/create-dish', authMiddleware, dishController.createDish);
+router.patch('/edit-dish/:dishId', authMiddleware, dishController.updateDish);
+router.delete('/delete-dish/:dishId', authMiddleware, dishController.deleteDish);
 
 module.exports = router;
