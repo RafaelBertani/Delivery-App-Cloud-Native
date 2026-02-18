@@ -1,4 +1,4 @@
-const dishService = require('../services/dishService');
+const dishService = require('../services/dish.service');
 const createDishSchema = require('../validations/createDish.schema');
 const updateDishSchema = require('../validations/updateDish.schema');
 

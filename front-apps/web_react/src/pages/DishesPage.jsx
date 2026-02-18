@@ -183,7 +183,7 @@ export default function DishesPage() {
       
       {/* Cabeçalho */}
       <div className="d-flex align-items-center mb-4">
-        <button className="btn btn-outline-secondary me-3" onClick={() => navigate(`/restaurant/${restaurantId}/dashboard`)}>
+        <button className="btn btn-outline-secondary me-3" onClick={() => navigate(`/my-restaurants/${restaurantId}/settings`)}>
           <i className="fas fa-arrow-left"></i> Voltar
         </button>
         <h3 className="fw-bold mb-0">Gerenciar Cardápio</h3>
