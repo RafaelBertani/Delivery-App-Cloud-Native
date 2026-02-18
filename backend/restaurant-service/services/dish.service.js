@@ -111,9 +111,48 @@ async function remove(userId, dishId) {
   }
 }
 
+async function findRestaurantDishes(id) {
+  // Busca os pratos do restaurante. 
+  // Dica de UX: ORDER BY is_available DESC faz com que os pratos disponíveis 
+  // apareçam primeiro na lista, e os esgotados fiquem no final.
+  const query = `
+    SELECT 
+      id, 
+      restaurant_id, 
+      name, 
+      description, 
+      price, 
+      image, 
+      is_available 
+    FROM dishes 
+    WHERE restaurant_id = $1
+    ORDER BY is_available DESC, name ASC
+  `;
+
+  try {
+    const res = await pool.query(query, [id]);
+
+    // Mapeia os resultados para converter o Buffer (BYTEA) em Base64
+    const dishes = res.rows.map(dish => {
+      if (dish.image) {
+        // Converte o buffer binário para uma string base64 legível pelo navegador HTML (tag <img>)
+        dish.image = `data:image/jpeg;base64,${dish.image.toString('base64')}`;
+      }
+      return dish;
+    });
+
+    return dishes;
+
+  } catch (error) {
+    console.error("Erro no service findRestaurantDishes:", error);
+    throw error; // Lança o erro para o Controller tratar e responder com status 500
+  }
+}
+
 module.exports = {
   listByRestaurantId,
   create,
   update,
-  remove
+  remove,
+  findRestaurantDishes
 };

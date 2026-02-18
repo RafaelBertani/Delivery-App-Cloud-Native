@@ -131,10 +131,29 @@ async function getSuggestions (req, res) {
   }
 };
 
+async function getRestaurantInfo (req, res) {
+  try {
+    const { id } = req.params;
+
+    const restaurantInfo = await restaurantService.findRestaurantInfo(id);
+
+    if (!restaurantInfo) {
+      return res.status(404).json({ message: 'Restaurante não encontrado.' });
+    }
+
+    return res.status(200).json(restaurantInfo);
+
+  } catch (error) {
+    console.error("Erro ao acessar informações do restaurante", error);
+    return res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+};
+
 module.exports = {
     listRestaurants,
     createRestaurant,
     manageRestaurant,
     getRestaurantById,
-    getSuggestions
+    getSuggestions,
+    getRestaurantInfo
 };

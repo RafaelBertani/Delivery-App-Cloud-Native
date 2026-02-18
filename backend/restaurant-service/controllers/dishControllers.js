@@ -102,9 +102,25 @@ async function deleteDish (req, res) {
   }
 };
 
+async function getRestaurantDishes (req, res) {
+  try {
+
+    const { id } = req.params;
+
+    const restaurantdishes = await restaurantService.findRestaurantDishes(id);
+
+    return res.status(200).json(restaurantdishes);
+
+  } catch (error) {
+    console.error("Erro ao acessar informações do restaurante", error);
+    return res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+};
+
 module.exports = {
     listDishes,
     createDish,
     updateDish,
-    deleteDish
+    deleteDish,
+    getRestaurantDishes
 };

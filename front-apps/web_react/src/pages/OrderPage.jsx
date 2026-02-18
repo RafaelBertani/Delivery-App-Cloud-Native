@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/OrderPage.css'; // Vamos criar este arquivo para a barra fixa
+import '../styles/OrderPage.css';
 
 const DEFAULT_LOGO = "https://cdn-icons-png.flaticon.com/512/1046/1046784.png";
 const DEFAULT_DISH = "https://cdn-icons-png.flaticon.com/512/3014/3014520.png";
@@ -15,6 +15,7 @@ export default function OrderPage() {
   const [dishes, setDishes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   // O carrinho será um objeto onde a chave é o ID do prato e o valor é a quantidade
   // Exemplo: { 1: 2, 5: 1 } -> 2x prato id 1, 1x prato id 5
@@ -83,12 +84,61 @@ export default function OrderPage() {
   const totalItems = Object.values(cart).reduce((sum, qtd) => sum + qtd, 0);
 
   // 4. Finalizar Pedido
-  const handleCheckout = () => {
-    // Aqui você pode redirecionar para a página de checkout ou abrir um modal
-    console.log("Itens no carrinho:", cart);
-    console.log("Total a pagar:", cartTotal);
-    alert(`Pedido iniciado! Total: R$ ${cartTotal.toFixed(2).replace('.', ',')}`);
-    // navigate(`/checkout/${id}`, { state: { cart, cartTotal } }); // Exemplo futuro
+  const handleCheckout = async () => {
+    // 1. Verifica se o usuário está logado
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert("Você precisa estar logado para finalizar o pedido!");
+      navigate('/signIn'); // redireciona para o login
+      return;
+    }
+
+    // 2. Transforma o carrinho (Objeto) no formato esperado pelo Backend (Array)
+    // Ex: { '1': 2, '5': 1 }  --->  [{ dish_id: 1, quantity: 2 }, { dish_id: 5, quantity: 1 }]
+    const items = Object.entries(cart).map(([dishId, quantity]) => ({
+      dish_id: parseInt(dishId),
+      quantity: quantity
+    }));
+
+    // Garante que não vai enviar um pedido vazio pro backend
+    if (items.length === 0) {
+      alert("Seu carrinho está vazio!");
+      return;
+    }
+
+    // 3. Monta o Payload (pacote de dados)
+    const payload = {
+      restaurant_id: parseInt(id),
+      items: items
+    };
+
+    try {
+      // INÍCIO DO LOADING: Bloqueia o botão
+      setIsCheckingOut(true);
+      
+      // 4. Dispara a requisição para criar o pedido
+      const response = await axios.post('http://localhost:3002/api/orders/create', payload, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      // Sucesso!
+      alert("Pedido realizado com sucesso!");
+      
+      // Limpa o carrinho para não ficar lixo na tela
+      setCart({});
+      
+      // Redireciona o usuário para a Home (ou para a tela de rastreio, se tiver)
+      navigate('/');
+
+    } catch (error) {
+      console.error("Erro ao finalizar pedido:", error);
+      alert(error.response?.data?.message || "Ocorreu um erro ao processar seu pedido. Tente novamente.");
+      
+    } finally {
+      // FIM DO LOADING: Libera o botão de novo
+      // O bloco finally executa SEMPRE, dando erro ou dando sucesso.
+      setIsCheckingOut(false);
+    }
   };
 
   // --- RENDERIZAÇÃO ---
@@ -204,7 +254,7 @@ export default function OrderPage() {
 
       {/* --- BARRA FIXA DO CARRINHO (Aparece só se tiver itens) --- */}
       {totalItems > 0 && (
-        <div className="fixed-bottom bg-white border-top shadow-lg p-3 cart-footer-bar slide-up">
+
           <div className="container d-flex justify-content-between align-items-center" style={{ maxWidth: '800px' }}>
             
             {/* Resumo */}
@@ -216,12 +266,21 @@ export default function OrderPage() {
             </div>
 
             {/* Botão de Avançar */}
-            <button className="btn btn-primary btn-lg fw-bold px-4 rounded-pill shadow-sm" onClick={handleCheckout}>
-              Fazer Pedido <i className="fas fa-chevron-right ms-2"></i>
+            <button 
+                className="btn btn-primary btn-lg fw-bold px-4 rounded-pill shadow-sm" 
+                onClick={handleCheckout}
+                disabled={isCheckingOut} // <--- Desabilita o botão
+                >
+                {isCheckingOut ? (
+                    <>Processando <span className="spinner-border spinner-border-sm ms-2"></span></>
+                ) : (
+                    <>Fazer Pedido <i className="fas fa-chevron-right ms-2"></i></>
+                )}
             </button>
             
+            
           </div>
-        </div>
+
       )}
 
     </div>

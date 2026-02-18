@@ -16,7 +16,9 @@ router.get('/status', (req, res) => {
 
 // 🔓 Públicas
 router.get('/:id/list-dishes', dishController.listDishes);
-router.get('/suggested',restaurantController.getSuggestions);
+router.get('/suggested', restaurantController.getSuggestions);
+router.get('/:id', restaurantController.getRestaurantInfo);
+router.get('/:id/list-dishes', dishController.getRestaurantDishes);
 
 // 🔐 Protegidas
 router.post('/new', authMiddleware, restaurantController.createRestaurant);

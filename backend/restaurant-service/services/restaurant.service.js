@@ -168,10 +168,42 @@ async function getTenRandomRestaurants() {
   
 };
 
+async function findRestaurantInfo(id) {
+  const query = `
+    SELECT id, name, description, logo, street, city, state, is_open 
+    FROM restaurants 
+    WHERE id = $1
+  `;
+
+  try {
+    const res = await pool.query(query, [id]);
+
+    // 1. Verifica se encontrou algum restaurante com esse ID
+    if (res.rowCount === 0) {
+      return null; // Retorna null para o controller saber que não existe
+    }
+
+    // 2. Pega apenas o primeiro (e único) restaurante encontrado
+    const restaurant = res.rows[0];
+
+    // 3. Converte a logo de Buffer para Base64 (se existir)
+    if (restaurant.logo) {
+      restaurant.logo = `data:image/jpeg;base64,${restaurant.logo.toString('base64')}`;
+    }
+
+    // 4. Retorna O OBJETO (e não um array)
+    return restaurant; 
+    
+  } catch (error) {
+    throw error; 
+  }
+}
+
 module.exports = {
   findByOwnerId,
   createNew,
   updateRestaurant,
   findByIdAndOwner,
-  getTenRandomRestaurants
+  getTenRandomRestaurants,
+  findRestaurantInfo
 };
