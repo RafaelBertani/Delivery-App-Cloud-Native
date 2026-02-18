@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../styles/SuggestedPage.css";
+import { useAuth } from '../contexts/AuthContext';
 
 const DEFAULT_LOGO = "https://cdn-icons-png.flaticon.com/512/1046/1046784.png";
 
@@ -11,6 +12,7 @@ export default function SuggestedPage() {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { user, updateUserProfile } = useAuth();
 
   useEffect(() => {
     let isMounted = true;
@@ -38,6 +40,14 @@ export default function SuggestedPage() {
 
     return () => { isMounted = false; };
   }, []);
+
+  function browseRestaurant(id){
+    if (!user) {
+      navigate('/signIn');
+    } else {
+      navigate(`/restaurant/${id}`);
+    }
+  }
 
   return (
     <div className="container mt-5 mb-5">
@@ -78,7 +88,7 @@ export default function SuggestedPage() {
                 {/* Card Clicável */}
                 <div 
                   className="card suggested-card shadow-sm border-0 w-100" 
-                  onClick={() => navigate(`/restaurant/${rest.id}`)}
+                  onClick={() => {browseRestaurant(rest.id)} }
                 >
                   <div className="card-body text-center p-4 d-flex flex-column">
                     

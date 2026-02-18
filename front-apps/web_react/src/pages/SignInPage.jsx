@@ -53,7 +53,7 @@ export default function SignInPage() {
       return;
     }
 
-    console.log('Dados válidos:', formData);
+    //console.log('Dados válidos:', formData);
 
     try {
       const response = await axios.post(

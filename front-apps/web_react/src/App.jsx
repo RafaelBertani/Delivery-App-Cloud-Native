@@ -17,6 +17,7 @@ import RestaurantsPage from "./pages/RestaurantsPage";
 import ManageRestaurantPage from "./pages/ManageRestaurantPage";
 import DishesPage from './pages/DishesPage';
 import SuggestedPage from './pages/SuggestedPage';
+import OrderPage from './pages/OrderPage';
 
 function App() {
 
@@ -51,12 +52,12 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/signIn" element={<SignInPage />} />
             <Route path="/signUp" element={<SignUpPage />} />
+            
             <Route path="/suggested" element={<SuggestedPage />} />
-
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/my-restaurants" element={<RestaurantsPage />} />
-
+            <Route path="/restaurant/:id" element={<OrderPage />} />
             <Route path="/my-restaurants/:id/settings" element={<ManageRestaurantPage />} />
             <Route path="/my-restaurants/:id/edit-menu" element={<DishesPage />} />
           </Routes>

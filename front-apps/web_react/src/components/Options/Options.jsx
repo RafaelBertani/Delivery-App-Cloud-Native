@@ -54,6 +54,7 @@ const Options = () => {
       <a className="btn btn-primary me-2" onClick={goToProfile}>
         <i className="fas fa-user"></i> Conta
       </a>
+      
       <a className="btn btn-primary me-2" onClick={goToSettings}>
         <i className="fas fa-cog"></i> Configurações
       </a>

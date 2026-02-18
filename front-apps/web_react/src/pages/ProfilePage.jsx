@@ -1,5 +1,5 @@
 import "../styles/ProfilePage.css";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -17,7 +17,12 @@ export default function ProfilePage() {
   const [tempValue, setTempValue] = useState("");
   const [loading, setLoading] = useState(false); 
 
-  // O useEffect que lia o localStorage foi removido, pois o AuthProvider deve gerenciar isso.
+  useEffect(() => {
+    // Redireciona se não estiver logado
+    if (!user) {
+      navigate('/signIn');
+    }
+  }, [user, navigate]);
 
   async function saveToBackend(field, value) {
     const token = localStorage.getItem('token');

@@ -67,7 +67,7 @@ export default function SignUpPage() {
       return;
     }
 
-    console.log('Dados válidos:', formData);
+    //console.log('Dados válidos:', formData);
 
     try {
       await axios.post('http://localhost:3001/api/auth/signup', formData );
