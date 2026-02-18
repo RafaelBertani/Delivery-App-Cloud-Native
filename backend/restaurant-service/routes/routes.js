@@ -18,5 +18,6 @@ router.get('/status', (req, res) => {
 // 🔐 Protegidas
 router.post('/new', authMiddleware, controller.createRestaurant);
 router.get('/list', authMiddleware, controller.listRestaurants);
+router.patch('/:id/settings', authMiddleware, controller.manageRestaurant);
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const axios = require('axios');
 const Joi = require('joi');
 const restaurantSchema = require('../validations/restaurant.schema.js');
+const restaurantUpdateSchema = require('../validations/restaurantUpdate.schema.js');
 const restaurantService = require('../services/restaurant.service.js');
 
 async function createRestaurant(req, res) {
@@ -53,7 +54,49 @@ async function listRestaurants (req, res) {
   }
 };
 
+async function manageRestaurant (req, res) {
+  try {
+    const userId = req.user.sub; // ID do dono (vindo do token)
+    const { id } = req.params;   // ID do restaurante (vindo da URL)
+
+    // 1. Validação Joi
+    // stripUnknown: true garante que campos como "id", "created_at" ou lixo sejam removidos
+    const { error, value } = restaurantUpdateSchema.validate(req.body, { 
+      abortEarly: true, 
+      stripUnknown: true 
+    });
+
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+
+    // Se não sobrou nenhum campo válido para atualizar (ex: enviou objeto vazio)
+    if (Object.keys(value).length === 0) {
+      return res.status(400).json({ message: 'Nenhum dado válido enviado para atualização.' });
+    }
+
+    // 2. Chama o Service
+    const updatedRestaurant = await restaurantService.updateRestaurant(id, userId, value);
+
+    return res.status(200).json({
+      message: 'Restaurante atualizado com sucesso!',
+      restaurant: updatedRestaurant
+    });
+
+  } catch (error) {
+    console.error("Erro no controller manage:", error);
+    
+    // Tratamento de erros específicos do Service
+    if (error.message === 'Restaurante não encontrado ou permissão negada.') {
+      return res.status(404).json({ message: error.message });
+    }
+    
+    return res.status(500).json({ message: 'Erro interno ao atualizar restaurante.' });
+  }
+};
+
 module.exports = {
     listRestaurants,
-    createRestaurant
+    createRestaurant,
+    manageRestaurant
 };

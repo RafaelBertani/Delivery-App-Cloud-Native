@@ -70,7 +70,63 @@ async function findByOwnerId( id ) {
   }
 };
 
+async function updateRestaurant(restaurantId, ownerId, updates) {
+  
+  // 1. Tratamento da Imagem (Base64 -> Buffer) se ela estiver nos updates
+  if (updates.logo) {
+    // Remove o cabeçalho do base64 se existir (ex: "data:image/png;base64,")
+    const base64Data = updates.logo.replace(/^data:image\/\w+;base64,/, "");
+    updates.logo = Buffer.from(base64Data, 'base64');
+  } else if (updates.logo === null || updates.logo === '') {
+    // Se o usuário mandou string vazia ou null explicitamente, salvamos null no banco
+    updates.logo = null;
+  }
+
+  // 2. Construção da Query Dinâmica
+  const fields = Object.keys(updates);
+  const values = Object.values(updates);
+
+  // Mapeia os campos para a sintaxe do SQL: "name = $1", "city = $2", etc.
+  const setClause = fields.map((field, index) => `${field} = $${index + 1}`).join(', ');
+
+  // Adiciona os IDs no final do array de valores para usar no WHERE
+  values.push(restaurantId);
+  values.push(ownerId);
+
+  // O índice do restaurantId é (tamanho atual) - 1 + 1 (por ser base 1) = length
+  // O índice do ownerId é length + 1
+  const paramIndexId = values.length - 1;
+  const paramIndexOwner = values.length;
+
+  const query = `
+    UPDATE restaurants 
+    SET ${setClause}
+    WHERE id = $${paramIndexId} AND owner_id = $${paramIndexOwner}
+    RETURNING id, name, description, street, city, state, zip_code, country, is_open, is_active
+  `;
+
+  // console.log("Query:", query); // Debug se precisar
+  // console.log("Values:", values);
+
+  try {
+    const res = await pool.query(query, values);
+
+    if (res.rowCount === 0) {
+      // Se não atualizou nada, ou o ID não existe ou o usuário não é o dono
+      throw new Error('Restaurante não encontrado ou permissão negada.');
+    }
+
+    // Retorna o objeto atualizado (convertemos a logo de volta para base64 se necessário no futuro, 
+    // mas aqui retornamos sem a logo pesada para economizar banda na resposta de sucesso)
+    return res.rows[0];
+
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   findByOwnerId,
-  createNew
+  createNew,
+  updateRestaurant
 };
