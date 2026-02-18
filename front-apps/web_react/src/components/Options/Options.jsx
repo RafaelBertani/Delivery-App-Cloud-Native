@@ -42,7 +42,7 @@ const Options = () => {
       )}
       
       {user?.has_restaurant && (
-        <a href="#" className="btn btn-primary me-2" onClick={goToRestaurants}>
+        <a className="btn btn-primary me-2" onClick={goToRestaurants}>
           <i className="fas fa-store"></i> Meus Restaurantes
         </a>
       )}

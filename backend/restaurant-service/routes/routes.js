@@ -14,15 +14,10 @@ router.get('/status', (req, res) => {
 });
 
 // 🔓 Públicas
-router.get('/list', controller.list);
+
 
 // 🔐 Protegidas
-router.get('/me', authMiddleware, controller.me);
-router.post('/new', authMiddleware, (req, res) => {
-  res.json({
-    message: 'Access granted',
-    user: req.user
-  });
-});
+router.post('/new', authMiddleware, controller.createRestaurant);
+router.get('/list', authMiddleware, controller.listRestaurants);
 
 module.exports = router;

@@ -31,25 +31,29 @@ export default function RestaurantsPage() {
 
   // 1. Carregar restaurantes ao abrir a página
   useEffect(() => {
-    fetchRestaurants();
-  }, []);
+    if (user) {
+      fetchRestaurants();
+    }
+  }, [user]); 
 
   async function fetchRestaurants() {
     const token = localStorage.getItem('token');
 
-    if (!user || !token) return;
+    if (!user || !token) {
+        setLoadingList(false); 
+        return;
+    }
 
     try {
-      setLoadingList(true);
-      const response = await axios.get('http://localhost:3001/api/restaurants/list', {
-        params: { id: user.id },
+      setLoadingList(true); // Garante que o loading aparece ao recarregar
+      const response = await axios.get('http://localhost:3002/api/restaurants/list', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRestaurants(response.data);
       setError('');
     } catch (err) {
       console.error(err);
-      setError('Erro ao carregar restaurantes. Tente novamente.');
+      setError('Erro ao carregar restaurantes.');
     } finally {
       setLoadingList(false);
     }
@@ -87,7 +91,7 @@ export default function RestaurantsPage() {
 
     try {
       setCreating(true);
-      await axios.post('http://localhost:3001/api/restaurants/new', {id: user.id, ...formData}, {
+      await axios.post('http://localhost:3002/api/restaurants/new', formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
