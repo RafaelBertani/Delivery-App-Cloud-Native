@@ -12,7 +12,6 @@ router.get('/status', (req, res) => {
   const { code } = req.query;
   res.json({ status: getStatus(code) });
 });
-
 // 🔓 Públicas
 
 

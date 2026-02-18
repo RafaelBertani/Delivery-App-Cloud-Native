@@ -1,28 +1,28 @@
 const axios = require('axios');
 const Joi = require('joi');
-const registerSchema = require('../validations/register.schema.js');
-const loginSchema = require('../validations/login.schema.js');
+const restaurantSchema = require('../validations/restaurant.schema.js');
 const restaurantService = require('../services/restaurant.service.js');
 
 async function createRestaurant(req, res) {
   try {
     const userId = req.user.sub;
-    const { 
-      name, 
-      description, 
-      street, 
-      city, 
-      state, 
-      zip_code, 
-      country, 
-      logo 
-    } = req.body;
+
+    const { error, value } = restaurantSchema.validate(req.body, { 
+      abortEarly: true, // Para no primeiro erro
+      stripUnknown: true // Remove campos que não existem no schema (segurança)
+    });
+
+    if (error) {
+      return res.status(400).json({ 
+        message: error.details[0].message 
+      });
+    }
 
     if (req.query.id && req.query.id !== userId) {
       return res.status(403).json({ message: 'Acesso negado.' });
     }
 
-    const newRestaurant = await restaurantService.createNew(userId, req.body);
+    const newRestaurant = await restaurantService.createNew(userId, value);
 
     return res.status(201).json({
       message: 'Restaurante criado com sucesso!',
