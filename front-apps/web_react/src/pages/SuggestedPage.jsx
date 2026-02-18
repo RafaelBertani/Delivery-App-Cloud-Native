@@ -18,7 +18,6 @@ export default function SuggestedPage() {
     async function fetchSuggestedRestaurants() {
       try {
         setLoading(true);
-        // Chama a rota pública que retorna 10 restaurantes aleatórios
         const response = await axios.get('http://localhost:3002/api/restaurants/suggested');
         
         if (isMounted) {

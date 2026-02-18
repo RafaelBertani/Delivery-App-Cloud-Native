@@ -139,9 +139,39 @@ async function findByIdAndOwner(id, ownerId) {
   }
 };
 
+async function getTenRandomRestaurants() {
+  
+  const query = `
+    SELECT id, name, description, logo, street, city, state, is_open 
+    FROM restaurants 
+    ORDER BY RANDOM() 
+    LIMIT 10
+  `;
+
+  try {
+    const res = await pool.query(query);
+
+    // Percorre o array de resultados para converter a imagem BYTEA em Base64
+    const restaurants = res.rows.map(rest => {
+      if (rest.logo) {
+        rest.logo = `data:image/jpeg;base64,${rest.logo.toString('base64')}`;
+      }
+      return rest;
+    });
+
+    return restaurants;
+    
+  } catch (error) {
+    // O erro será capturado pelo bloco catch do seu controller
+    throw error; 
+  }
+  
+};
+
 module.exports = {
   findByOwnerId,
   createNew,
   updateRestaurant,
-  findByIdAndOwner
+  findByIdAndOwner,
+  getTenRandomRestaurants
 };

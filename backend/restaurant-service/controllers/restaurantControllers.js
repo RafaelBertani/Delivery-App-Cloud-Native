@@ -120,9 +120,21 @@ async function getRestaurantById (req, res) {
   }
 };
 
+async function getSuggestions (req, res) {
+  try {
+    const suggestions = await restaurantService.getTenRandomRestaurants();
+
+    return res.status(200).json(suggestions);
+  } catch (error) {
+    console.error('Erro ao retornar sugestões pratos:', error);
+    return res.status(500).json({ message: 'Erro ao retornar lista de sugestões.' });
+  }
+};
+
 module.exports = {
     listRestaurants,
     createRestaurant,
     manageRestaurant,
-    getRestaurantById
+    getRestaurantById,
+    getSuggestions
 };
