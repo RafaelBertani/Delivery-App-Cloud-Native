@@ -11,7 +11,7 @@ const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 export default function ProfilePage() {
   const navigate = useNavigate();
   
-  const { user, updateUserProfile } = useAuth(); 
+  const { user, updateUserProfile } = useAuth();
   
   const [editingField, setEditingField] = useState(null);
   const [tempValue, setTempValue] = useState("");

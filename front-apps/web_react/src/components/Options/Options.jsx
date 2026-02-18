@@ -19,6 +19,10 @@ const Options = () => {
   function goToRestaurants(){
     navigate('/my-restaurants');
   }
+
+  function goToSuggested(){
+    navigate('/suggested');
+  }
   
   // Se o contexto ainda estiver carregando, pode retornar null ou carregar normal
   // if (!user) return null; 
@@ -28,7 +32,7 @@ const Options = () => {
       <a className="btn btn-primary me-2">
         <i className="fas fa-search"></i> Pesquisar
       </a>
-      <a className="btn btn-primary me-2">
+      <a className="btn btn-primary me-2" onClick={goToSuggested}>
         <i className="fas fa-lightbulb"></i> Sugeridos
       </a>
       <a className="btn btn-primary me-2">
