@@ -14,15 +14,23 @@ router.get('/status', (req, res) => {
   res.json({ status: getStatus(code) });
 });
 
-// 🔓 Públicas
-router.get('/:id/list-dishes', dishController.listDishes);
-router.get('/suggested', restaurantController.getSuggestions);
-router.get('/:id', restaurantController.getRestaurantInfo);
-router.get('/:id/list-dishes', dishController.getRestaurantDishes);
+// ROTAS ESTÁTICAS
 
-// 🔐 Protegidas
+// Públicas
+router.get('/suggested', restaurantController.getSuggestions);
+
+// Protegidas
 router.post('/new', authMiddleware, restaurantController.createRestaurant);
 router.get('/list', authMiddleware, restaurantController.listRestaurants);
+
+// ROTAS DINÂMICAS 
+
+// Públicas
+router.get('/:id/list-dishes', dishController.listDishes);
+router.get('/:id', restaurantController.getRestaurantInfo);
+router.get('/:id/list-all-dishes', dishController.getRestaurantDishes);
+
+// Protegidas
 router.patch('/:id/settings', authMiddleware, restaurantController.manageRestaurant);
 router.get('/:id/settings', authMiddleware, restaurantController.getRestaurantById);
 router.post('/:id/create-dish', authMiddleware, dishController.createDish);

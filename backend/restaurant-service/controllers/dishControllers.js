@@ -107,7 +107,7 @@ async function getRestaurantDishes (req, res) {
 
     const { id } = req.params;
 
-    const restaurantdishes = await restaurantService.findRestaurantDishes(id);
+    const restaurantdishes = await dishService.findRestaurantDishes(id);
 
     return res.status(200).json(restaurantdishes);
 

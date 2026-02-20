@@ -32,7 +32,7 @@ export default function OrderPage() {
         // Dispara as duas requisições ao mesmo tempo para ser mais rápido
         const [restRes, dishesRes] = await Promise.all([
           axios.get(`http://localhost:3002/api/restaurants/${id}`),
-          axios.get(`http://localhost:3002/api/restaurants/${id}/list-dishes`)
+          axios.get(`http://localhost:3002/api/restaurants/${id}/list-all-dishes`)
         ]);
 
         if (isMounted) {
