@@ -53,6 +53,32 @@ services:
     networks:
       - backend_network
 
+  order-service:
+    image: order-service:latest
+    ports:
+      - "3003:3003"
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      JWT_SECRET_KEY_FILE: /run/secrets/jwt_secret
+      RABBITMQ_USER_FILE: /run/secrets/rabbitmq_user
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
+    secrets:
+      - jwt_secret
+      - rabbitmq_user
+      - rabbitmq_password
+      - postgres_user
+      - postgres_password
+      - postgres_db_delivery
+    depends_on:
+      - rabbitmq
+      - postgres
+    deploy:
+      restart_policy:
+        condition: on-failure
+    networks:
+      - backend_network
+
   rabbitmq:
     image: rabbitmq:3.13-management
     ports:

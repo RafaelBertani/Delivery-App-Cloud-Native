@@ -117,18 +117,20 @@ export default function OrderPage() {
       setIsCheckingOut(true);
       
       // 4. Dispara a requisição para criar o pedido
-      const response = await axios.post('http://localhost:3002/api/orders/create', payload, {
+      const response = await axios.post('http://localhost:3003/api/orders/create', payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      // Sucesso!
-      alert("Pedido realizado com sucesso!");
+      const { message, order } = response.data;
+
+      const totalFormatado = parseFloat(order.total_amount).toFixed(2).replace('.', ',');
+
+      alert(`${message}\n\nPedido Nº: #${order.id}\nTotal Confirmado: R$ ${totalFormatado}`);
       
       // Limpa o carrinho para não ficar lixo na tela
       setCart({});
       
-      // Redireciona o usuário para a Home (ou para a tela de rastreio, se tiver)
-      navigate('/');
+      navigate('/orders');
 
     } catch (error) {
       console.error("Erro ao finalizar pedido:", error);
