@@ -128,6 +128,8 @@ CREATE TABLE deliveries (
     current_lng DECIMAL(9,6),
     
     notes TEXT,
+
+    delivery_code VARCHAR(3) DEFAULT LPAD(FLOOR(RANDOM() * 1000)::TEXT, 3, '0'),
     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
