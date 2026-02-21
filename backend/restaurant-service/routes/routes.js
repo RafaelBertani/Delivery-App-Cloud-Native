@@ -29,6 +29,7 @@ router.get('/list', authMiddleware, restaurantController.listRestaurants);
 router.get('/:id/list-dishes', dishController.listDishes);
 router.get('/:id', restaurantController.getRestaurantInfo);
 router.get('/:id/list-all-dishes', dishController.getRestaurantDishes);
+router.get('/search', restaurantController.searchRestaurants);
 
 // Protegidas
 router.patch('/:id/settings', authMiddleware, restaurantController.manageRestaurant);

@@ -149,11 +149,32 @@ async function getRestaurantInfo (req, res) {
   }
 };
 
+async function searchRestaurants(req, res) {
+  try {
+    // Pega a variável 'q' da URL
+    const searchTerm = req.query.q;
+
+    // Se a pessoa pesquisar vazio, devolvemos um array vazio para não quebrar
+    if (!searchTerm || searchTerm.trim() === '') {
+      return res.status(200).json([]);
+    }
+
+    const restaurants = await restaurantService.searchRestaurants(searchTerm);
+    
+    return res.status(200).json(restaurants);
+    
+  } catch (error) {
+    console.error('Erro ao pesquisar restaurantes:', error);
+    return res.status(500).json({ message: 'Erro interno ao realizar a pesquisa.' });
+  }
+};
+
 module.exports = {
     listRestaurants,
     createRestaurant,
     manageRestaurant,
     getRestaurantById,
     getSuggestions,
-    getRestaurantInfo
+    getRestaurantInfo,
+    searchRestaurants
 };

@@ -197,7 +197,38 @@ async function findRestaurantInfo(id) {
   } catch (error) {
     throw error; 
   }
-}
+};
+
+async function searchRestaurants(searchTerm) {
+  // O ILIKE ignora maiúsculas/minúsculas.
+  // Os '%' à volta do termo dizem ao banco: "pode ter qualquer texto antes ou depois desta palavra"
+  const query = `
+    SELECT id, name, description, logo, is_open, city, state 
+    FROM restaurants 
+    WHERE is_active = TRUE 
+      AND name ILIKE $1 
+    ORDER BY is_open DESC, name ASC
+  `;
+  
+  // Exemplo: se o termo for "pizza", o valor passado será "%pizza%"
+  const values = [`%${searchTerm}%`];
+
+  try {
+    const res = await pool.query(query, values);
+    
+    // Formata as logos de Buffer para Base64 (tal como fez no suggested)
+    const formattedRestaurants = res.rows.map(rest => {
+      if (rest.logo) {
+        rest.logo = `data:image/jpeg;base64,${rest.logo.toString('base64')}`;
+      }
+      return rest;
+    });
+
+    return formattedRestaurants;
+  } catch (error) {
+    throw error;
+  }
+};
 
 module.exports = {
   findByOwnerId,
@@ -205,5 +236,6 @@ module.exports = {
   updateRestaurant,
   findByIdAndOwner,
   getTenRandomRestaurants,
-  findRestaurantInfo
+  findRestaurantInfo,
+  searchRestaurants
 };
