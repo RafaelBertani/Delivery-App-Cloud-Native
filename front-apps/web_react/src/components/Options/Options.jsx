@@ -27,13 +27,21 @@ const Options = () => {
   function goToOrderList(){
     navigate('/orders-list');
   }
+
+  function goToDeliveryPanel() {
+    navigate('/delivery-panel');
+  }
+
+  function goToSearch() {
+    navigate('/search');
+  }
   
   // Se o contexto ainda estiver carregando, pode retornar null ou carregar normal
   // if (!user) return null; 
 
   return (
      <div className="options d-flex bg-primary text-white p-2 justify-content-center align-items-center">
-      <a className="btn btn-primary me-2">
+      <a className="btn btn-primary me-2" onClick={goToSearch}>
         <i className="fas fa-search"></i> Pesquisar
       </a>
       <a className="btn btn-primary me-2" onClick={goToSuggested}>
@@ -44,7 +52,7 @@ const Options = () => {
       </a>
       
       {user?.is_delivery && (
-        <a className="btn btn-primary me-2">
+        <a className="btn btn-primary me-2" onClick={goToDeliveryPanel}>
           <i className="fas fa-motorcycle"></i> Painel Entregas
         </a>
       )}

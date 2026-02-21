@@ -20,6 +20,7 @@ import SuggestedPage from './pages/SuggestedPage';
 import OrderPage from './pages/OrderPage';
 import OrderListPage from './pages/OrderListPage';
 import ManageOrdersPage from './pages/ManageOrdersPage';
+import SearchPage from './pages/SearchPage';
 
 function App() {
 
@@ -54,14 +55,14 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/signIn" element={<SignInPage />} />
             <Route path="/signUp" element={<SignUpPage />} />
-
+            <Route path="/search" element={<SearchPage />} />
             <Route path="/suggested" element={<SuggestedPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/my-restaurants" element={<RestaurantsPage />} />
             <Route path="/restaurant/:id" element={<OrderPage />} />
-            {/* <Route path="/orders" element={<ViewOrdersPage />} /> */}
             <Route path="/orders-list" element={<OrderListPage />} />
+            {/* <Route path="delivery-panel" element={< DeliveryPanelPage/>}/> */}
             <Route path="/my-restaurants/:id/settings" element={<ManageRestaurantPage />} />
             <Route path="/my-restaurants/:id/edit-menu" element={<DishesPage />} />
             <Route path="/my-restaurants/:id/manage-orders" element={<ManageOrdersPage />} />
