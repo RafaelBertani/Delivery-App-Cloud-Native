@@ -109,4 +109,30 @@ async function requestDishInfo(dishId) {
   });
 }
 
-module.exports = { initRabbitMQClient, requestRestaurantInfo, requestDishInfo };
+async function requestUserActiveAddress(userId) {
+  if (!channel) await initRabbitMQClient();
+
+  return new Promise((resolve, reject) => {
+    const correlationId = crypto.randomUUID();
+
+    eventEmitter.once(correlationId, (response) => {
+      if (response && response.error) {
+        reject(new Error(response.error));
+      } else {
+        resolve(response);
+      }
+    });
+
+    // Envia o pedido para a nova fila que o 3001 está escutando
+    channel.sendToQueue(
+      'rpc_user_active_address',
+      Buffer.from(userId.toString()),
+      {
+        correlationId: correlationId,
+        replyTo: replyQueue
+      }
+    );
+  });
+}
+
+module.exports = { initRabbitMQClient, requestRestaurantInfo, requestDishInfo, requestUserActiveAddress };

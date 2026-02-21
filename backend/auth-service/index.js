@@ -1,9 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 const routes = require("./routes/routes.js");
+const { startRabbitMQServer } = require("./rabbitmq/rpcServer.js");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+startRabbitMQServer();
 
 app.use(cors());
 app.use(express.json());

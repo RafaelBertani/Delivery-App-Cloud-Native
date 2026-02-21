@@ -39,6 +39,12 @@ export default function ManageOrdersPage() {
   const handleUpdateStatus = async (orderId, newStatus) => {
     const token = localStorage.getItem('token');
     
+    // --- NOVO: Adiciona confirmação se o novo status for DELIVERING ---
+    if (newStatus === 'DELIVERING') {
+      const isConfirmed = window.confirm("O entregador informou o código correto e retirou o pedido?");
+      if (!isConfirmed) return; // Se ele cancelar, não faz nada.
+    }
+
     try {
       setProcessingId(orderId);
       
@@ -47,6 +53,8 @@ export default function ManageOrdersPage() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
+      // Como o nosso painel só mostra PENDING, PREPARING e PREPARED, 
+      // quando ele for pra DELIVERING, ele simplesmente vai sumir da tela!
       setOrders(prevOrders => 
         prevOrders.map(order => 
           order.id === orderId ? { ...order, status: newStatus } : order
@@ -149,10 +157,19 @@ export default function ManageOrdersPage() {
                 </button>
               )}
 
+              {/* --- NOVO: Botão para confirmar a retirada do pedido --- */}
               {order.status === 'PREPARED' && (
-                <span className="badge bg-success bg-opacity-10 text-success border border-success px-3 py-2 fs-6">
-                  <i className="fas fa-motorcycle me-2"></i> Aguardando Entregador
-                </span>
+                <button 
+                  className="btn btn-outline-success fw-bold px-3" 
+                  onClick={() => handleUpdateStatus(order.id, 'DELIVERING')}
+                  disabled={processingId === order.id}
+                >
+                  {processingId === order.id ? (
+                    <span className="spinner-border spinner-border-sm" role="status"></span>
+                  ) : (
+                    <><i className="fas fa-motorcycle me-2"></i> Confirmar Retirada</>
+                  )}
+                </button>
               )}
             </div>
           </div>

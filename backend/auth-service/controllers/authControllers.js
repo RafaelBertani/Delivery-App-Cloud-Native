@@ -4,7 +4,7 @@ const Joi = require('joi');
 const registerSchema = require('../validations/register.schema.js');
 const loginSchema = require('../validations/login.schema.js');
 const userService = require('../services/auth.service.js');
-const { getSecret } = require('../middlewares/authMiddleware');
+const { getSecret } = require('../middlewares/authMiddleware.js');
 const jwt = require('jsonwebtoken');
 
 async function signup(req, res) {

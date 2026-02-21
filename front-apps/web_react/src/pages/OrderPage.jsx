@@ -130,7 +130,7 @@ export default function OrderPage() {
       // Limpa o carrinho para não ficar lixo na tela
       setCart({});
       
-      navigate('/orders');
+      navigate('/orders-list');
 
     } catch (error) {
       console.error("Erro ao finalizar pedido:", error);

@@ -139,6 +139,14 @@ export default function OrderListPage() {
                       R$ {parseFloat(order.total_amount).toFixed(2).replace('.', ',')}
                     </h5>
                   </div>
+
+                  {/* Código de entrega */}
+                  <div className="text-end">
+                    <h5 className="fw-bold text-success mb-0">
+                        Código de entrega: {order.delivery_code}
+                    </h5>
+                  </div>
+
                 </div>
 
                 <hr className="text-muted opacity-25 my-2" />

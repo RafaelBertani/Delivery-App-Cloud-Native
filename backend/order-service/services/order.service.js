@@ -1,14 +1,21 @@
 const pool = require('../dbconfig/database-config');
+const rpcClient = require('../rabbitmq/rpcClient');
 
 async function registerOrder(userId, restaurantId, items) {
-  // Pega uma conexão exclusiva para podermos usar transação
   const client = await pool.connect();
 
   try {
-    // INICIA A TRANSAÇÃO: Daqui pra baixo, nada salva de verdade até o COMMIT
     await client.query('BEGIN');
 
-    // 1. O restaurante existe e está aberto?
+    // --- 1. BUSCA O ENDEREÇO VIA RABBITMQ ---
+    let deliveryAddress;
+    try {
+      deliveryAddress = await rpcClient.requestUserActiveAddress(userId);
+    } catch (err) {
+      throw new Error("Você precisa ter um endereço ativo para fazer um pedido.");
+    }
+
+    // 2. Valida restaurante... (código que você já tem)
     const restCheck = await client.query('SELECT is_open FROM restaurants WHERE id = $1', [restaurantId]);
     if (restCheck.rows.length === 0) throw new Error('Restaurante inválido.');
     if (!restCheck.rows[0].is_open) throw new Error('O restaurante está fechado no momento.');
@@ -16,61 +23,50 @@ async function registerOrder(userId, restaurantId, items) {
     let totalAmount = 0;
     const validatedItems = [];
 
-    // 2. Percorre os itens para pegar o PREÇO REAL no banco de dados
+    // 3. Valida itens e preços... (código que você já tem)
     for (const item of items) {
-      const dishRes = await client.query(
-        'SELECT price, is_available FROM dishes WHERE id = $1 AND restaurant_id = $2',
-        [item.dish_id, restaurantId]
-      );
-
-      // Verificações de segurança
-      if (dishRes.rows.length === 0) {
-        throw new Error(`Prato ID ${item.dish_id} inválido ou não pertence a este restaurante.`);
-      }
-      if (!dishRes.rows[0].is_available) {
-        throw new Error(`Desculpe, o prato ID ${item.dish_id} acabou de esgotar.`);
-      }
-
+      const dishRes = await client.query('SELECT price, is_available FROM dishes WHERE id = $1 AND restaurant_id = $2', [item.dish_id, restaurantId]);
+      if (dishRes.rows.length === 0) throw new Error(`Prato ID ${item.dish_id} inválido.`);
+      if (!dishRes.rows[0].is_available) throw new Error(`Prato ID ${item.dish_id} esgotado.`);
+      
       const realPrice = parseFloat(dishRes.rows[0].price);
-      totalAmount += realPrice * item.quantity; // Calcula o total real
-
-      // Guarda os dados certinhos para inserir depois
-      validatedItems.push({
-        dish_id: item.dish_id,
-        quantity: item.quantity,
-        unit_price: realPrice
-      });
+      totalAmount += realPrice * item.quantity;
+      validatedItems.push({ dish_id: item.dish_id, quantity: item.quantity, unit_price: realPrice });
     }
 
-    // 3. Insere o cabeçalho do pedido (Tabela: orders)
+    // --- 4. INSERE O CABEÇALHO DO PEDIDO COM O ENDEREÇO COPIADO ---
     const orderQuery = `
-      INSERT INTO orders (user_id, restaurant_id, total_amount, status) 
-      VALUES ($1, $2, $3, 'PENDING') 
-      RETURNING id, status, total_amount, created_at
+      INSERT INTO orders (
+        user_id, restaurant_id, total_amount, status, 
+        delivery_street, delivery_city, delivery_state, delivery_zip_code
+      ) 
+      VALUES ($1, $2, $3, 'PENDING', $4, $5, $6, $7) 
+      RETURNING id, status, total_amount, created_at, pickup_code
     `;
-    const orderRes = await client.query(orderQuery, [userId, restaurantId, totalAmount]);
+    const orderRes = await client.query(orderQuery, [
+      userId, 
+      restaurantId, 
+      totalAmount,
+      deliveryAddress.street,   // Copiado via RabbitMQ
+      deliveryAddress.city,     // Copiado via RabbitMQ
+      deliveryAddress.state,    // Copiado via RabbitMQ
+      deliveryAddress.zip_code  // Copiado via RabbitMQ
+    ]);
     const newOrder = orderRes.rows[0];
 
-    // 4. Insere cada item do pedido (Tabela: order_items)
+    // 5. Insere itens...
     for (const vItem of validatedItems) {
-      const itemQuery = `
-        INSERT INTO order_items (order_id, dish_id, quantity, unit_price) 
-        VALUES ($1, $2, $3, $4)
-      `;
+      const itemQuery = `INSERT INTO order_items (order_id, dish_id, quantity, unit_price) VALUES ($1, $2, $3, $4)`;
       await client.query(itemQuery, [newOrder.id, vItem.dish_id, vItem.quantity, vItem.unit_price]);
     }
 
-    // 5. TUDO DEU CERTO! Confirma as alterações no banco de dados.
     await client.query('COMMIT');
-
     return newOrder;
 
   } catch (error) {
-    // DEU ERRO NO MEIO DO CAMINHO? Desfaz tudo que tentamos salvar no BEGIN
     await client.query('ROLLBACK');
     throw error; 
   } finally {
-    // Libera a conexão para não travar o banco
     client.release();
   }
 }
@@ -78,7 +74,7 @@ async function registerOrder(userId, restaurantId, items) {
 async function getUserOrders(userId) {
   // 1. Busca APENAS os dados da tabela orders (Sem JOIN)
   const query = `
-    SELECT id, restaurant_id, total_amount, status, created_at 
+    SELECT id, restaurant_id, total_amount, status, created_at, delivery_code 
     FROM orders 
     WHERE user_id = $1 
     ORDER BY created_at DESC

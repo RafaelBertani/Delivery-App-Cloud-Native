@@ -21,6 +21,7 @@ import OrderPage from './pages/OrderPage';
 import OrderListPage from './pages/OrderListPage';
 import ManageOrdersPage from './pages/ManageOrdersPage';
 import SearchPage from './pages/SearchPage';
+//import DeliveryPanelPage from './pages/DeliveryPanelPage';
 
 function App() {
 

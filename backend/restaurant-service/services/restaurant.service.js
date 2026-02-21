@@ -144,7 +144,7 @@ async function getTenRandomRestaurants() {
   const query = `
     SELECT id, name, description, logo, street, city, state, is_open 
     FROM restaurants 
-    ORDER BY RANDOM() 
+    ORDER BY is_open DESC, RANDOM() 
     LIMIT 10
   `;
 

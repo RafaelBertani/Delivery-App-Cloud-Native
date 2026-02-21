@@ -20,6 +20,7 @@ CREATE TABLE users (
 CREATE TABLE addresses (
   id SERIAL PRIMARY KEY,
   user_id INT REFERENCES users(id) ON DELETE CASCADE,
+  name VARCHAR(50) NOT NULL,
   street VARCHAR(255) NOT NULL,
   city VARCHAR(100) NOT NULL,
   state VARCHAR(50) NOT NULL,
@@ -78,6 +79,12 @@ CREATE TABLE orders (
     ),
 
   pickup_code VARCHAR(3) DEFAULT LPAD(FLOOR(RANDOM() * 1000)::TEXT, 3, '0'),
+  delivery_code VARCHAR(3) DEFAULT LPAD(FLOOR(RANDOM() * 1000)::TEXT, 3, '0'),
+
+  delivery_street VARCHAR(255),
+  delivery_city VARCHAR(100),
+  delivery_state VARCHAR(50),
+  delivery_zip_code VARCHAR(20),
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP
@@ -129,8 +136,6 @@ CREATE TABLE deliveries (
     
     notes TEXT,
 
-    delivery_code VARCHAR(3) DEFAULT LPAD(FLOOR(RANDOM() * 1000)::TEXT, 3, '0'),
-    
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
