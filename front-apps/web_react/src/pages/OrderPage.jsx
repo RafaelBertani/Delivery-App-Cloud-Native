@@ -17,8 +17,6 @@ export default function OrderPage() {
   const [error, setError] = useState('');
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
-  // O carrinho será um objeto onde a chave é o ID do prato e o valor é a quantidade
-  // Exemplo: { 1: 2, 5: 1 } -> 2x prato id 1, 1x prato id 5
   const [cart, setCart] = useState({});
 
   // 1. Busca os Dados (Restaurante + Pratos)
@@ -29,7 +27,6 @@ export default function OrderPage() {
       try {
         setLoading(true);
         
-        // Dispara as duas requisições ao mesmo tempo para ser mais rápido
         const [restRes, dishesRes] = await Promise.all([
           axios.get(`http://localhost:3002/api/restaurants/${id}`),
           axios.get(`http://localhost:3002/api/restaurants/${id}/list-all-dishes`)
@@ -37,7 +34,6 @@ export default function OrderPage() {
 
         if (isMounted) {
           setRestaurant(restRes.data);
-          // Filtramos para mostrar apenas os pratos disponíveis ao cliente
           setDishes(dishesRes.data.filter(dish => dish.is_available));
         }
       } catch (err) {
@@ -67,78 +63,89 @@ export default function OrderPage() {
       if (newCart[dishId] > 1) {
         newCart[dishId] -= 1;
       } else {
-        delete newCart[dishId]; // Remove do objeto se chegar a zero
+        delete newCart[dishId]; 
       }
       return newCart;
     });
   };
 
   // 3. Cálculos do Carrinho
-  // Soma o (preço do prato * quantidade no carrinho)
   const cartTotal = dishes.reduce((total, dish) => {
     const quantity = cart[dish.id] || 0;
     return total + (parseFloat(dish.price) * quantity);
   }, 0);
 
-  // Conta quantos itens totais existem no carrinho
   const totalItems = Object.values(cart).reduce((sum, qtd) => sum + qtd, 0);
 
   // 4. Finalizar Pedido
   const handleCheckout = async () => {
-    // 1. Verifica se o usuário está logado
     const token = localStorage.getItem('token');
     if (!token) {
       alert("Você precisa estar logado para finalizar o pedido!");
-      navigate('/signIn'); // redireciona para o login
+      navigate('/signIn'); 
       return;
     }
 
-    // 2. Transforma o carrinho (Objeto) no formato esperado pelo Backend (Array)
-    // Ex: { '1': 2, '5': 1 }  --->  [{ dish_id: 1, quantity: 2 }, { dish_id: 5, quantity: 1 }]
     const items = Object.entries(cart).map(([dishId, quantity]) => ({
       dish_id: parseInt(dishId),
       quantity: quantity
     }));
 
-    // Garante que não vai enviar um pedido vazio pro backend
     if (items.length === 0) {
       alert("Seu carrinho está vazio!");
       return;
     }
 
-    // 3. Monta o Payload (pacote de dados)
     const payload = {
       restaurant_id: parseInt(id),
       items: items
     };
 
     try {
-      // INÍCIO DO LOADING: Bloqueia o botão
       setIsCheckingOut(true);
       
-      // 4. Dispara a requisição para criar o pedido
+      // ==========================================
+      // NOVA VALIDAÇÃO PROATIVA DE ENDEREÇO
+      // ==========================================
+      try {
+        const addressRes = await axios.get('http://localhost:3001/api/auth/addresses', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        // Verifica se há pelo menos um endereço com is_active === true
+        const hasActiveAddress = addressRes.data.some(addr => addr.is_active);
+        
+        if (!hasActiveAddress) {
+          alert("Você precisa cadastrar e ativar um endereço de entrega antes de fazer um pedido.\n\nVamos redirecionar você para o seu perfil para adicionar um endereço agora.");
+          setIsCheckingOut(false);
+          navigate('/profile'); // Envia o cliente direto para onde ele resolve o problema
+          return; // Trava o envio do pedido
+        }
+      } catch (addrErr) {
+        console.error("Erro ao verificar endereço:", addrErr);
+        alert("Não foi possível verificar seus endereços. Verifique sua conexão e tente novamente.");
+        setIsCheckingOut(false);
+        return;
+      }
+      // ==========================================
+
+      // Dispara a requisição para criar o pedido (só chega aqui se tiver endereço ativo)
       const response = await axios.post('http://localhost:3003/api/orders/create', payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       const { message, order } = response.data;
-
       const totalFormatado = parseFloat(order.total_amount).toFixed(2).replace('.', ',');
 
       alert(`${message}\n\nPedido Nº: #${order.id}\nTotal Confirmado: R$ ${totalFormatado}`);
       
-      // Limpa o carrinho para não ficar lixo na tela
       setCart({});
-      
       navigate('/orders-list');
 
     } catch (error) {
       console.error("Erro ao finalizar pedido:", error);
       alert(error.response?.data?.message || "Ocorreu um erro ao processar seu pedido. Tente novamente.");
-      
     } finally {
-      // FIM DO LOADING: Libera o botão de novo
-      // O bloco finally executa SEMPRE, dando erro ou dando sucesso.
       setIsCheckingOut(false);
     }
   };
@@ -162,7 +169,6 @@ export default function OrderPage() {
   }
 
   return (
-    // Adicionamos um padding-bottom grande para a barra fixa não cobrir o último prato
     <div className="container mt-4 pb-cart"> 
       
       {/* --- CABEÇALHO DO RESTAURANTE --- */}
@@ -254,35 +260,32 @@ export default function OrderPage() {
         </div>
       )}
 
-      {/* --- BARRA FIXA DO CARRINHO (Aparece só se tiver itens) --- */}
+      {/* --- BARRA FIXA DO CARRINHO --- */}
       {totalItems > 0 && (
-
-          <div className="container d-flex justify-content-between align-items-center" style={{ maxWidth: '800px' }}>
-            
-            {/* Resumo */}
-            <div>
-              <div className="text-muted small">Total com {totalItems} item(ns)</div>
-              <h4 className="fw-bold text-success mb-0">
-                R$ {cartTotal.toFixed(2).replace('.', ',')}
-              </h4>
-            </div>
-
-            {/* Botão de Avançar */}
-            <button 
-                className="btn btn-primary btn-lg fw-bold px-4 rounded-pill shadow-sm" 
-                onClick={handleCheckout}
-                disabled={isCheckingOut} // <--- Desabilita o botão
-                >
-                {isCheckingOut ? (
-                    <>Processando <span className="spinner-border spinner-border-sm ms-2"></span></>
-                ) : (
-                    <>Fazer Pedido <i className="fas fa-chevron-right ms-2"></i></>
-                )}
-            </button>
-            
-            
+        <div className="container d-flex justify-content-between align-items-center" style={{ maxWidth: '800px' }}>
+          
+          {/* Resumo */}
+          <div>
+            <div className="text-muted small">Total com {totalItems} item(ns)</div>
+            <h4 className="fw-bold text-success mb-0">
+              R$ {cartTotal.toFixed(2).replace('.', ',')}
+            </h4>
           </div>
 
+          {/* Botão de Avançar */}
+          <button 
+              className="btn btn-primary btn-lg fw-bold px-4 rounded-pill shadow-sm" 
+              onClick={handleCheckout}
+              disabled={isCheckingOut} 
+              >
+              {isCheckingOut ? (
+                  <>Processando <span className="spinner-border spinner-border-sm ms-2"></span></>
+              ) : (
+                  <>Fazer Pedido <i className="fas fa-chevron-right ms-2"></i></>
+              )}
+          </button>
+          
+        </div>
       )}
 
     </div>

@@ -21,7 +21,7 @@ import OrderPage from './pages/OrderPage';
 import OrderListPage from './pages/OrderListPage';
 import ManageOrdersPage from './pages/ManageOrdersPage';
 import SearchPage from './pages/SearchPage';
-//import DeliveryPanelPage from './pages/DeliveryPanelPage';
+import DeliveryPanelPage from './pages/DeliveryPanelPage';
 
 function App() {
 
@@ -63,7 +63,7 @@ function App() {
             <Route path="/my-restaurants" element={<RestaurantsPage />} />
             <Route path="/restaurant/:id" element={<OrderPage />} />
             <Route path="/orders-list" element={<OrderListPage />} />
-            {/* <Route path="delivery-panel" element={< DeliveryPanelPage/>}/> */}
+            <Route path="delivery-panel" element={< DeliveryPanelPage/>}/>
             <Route path="/my-restaurants/:id/settings" element={<ManageRestaurantPage />} />
             <Route path="/my-restaurants/:id/edit-menu" element={<DishesPage />} />
             <Route path="/my-restaurants/:id/manage-orders" element={<ManageOrdersPage />} />
