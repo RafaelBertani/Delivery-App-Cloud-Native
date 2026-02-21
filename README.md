@@ -32,3 +32,5 @@ docker exec -it delivery_app_postgres.1.i1tply90qntp86qat7gllhufy psql -U postgr
 cd .\bin\                                                  
 PS C:\Users\Rafael\Desktop\Delivery-App-Cloud-Native\infra\bin> ./create-secrets.sh                                        
 PS C:\Users\Rafael\Desktop\Delivery-App-Cloud-Native\infra\bin> cd ..
+
+docker build -t auth-service:latest ../backend/auth-service ; docker build -t restaurant-service:latest ../backend/restaurant-service ; docker build -t order-service:latest ../backend/order-service

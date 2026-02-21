@@ -69,11 +69,15 @@ CREATE TABLE orders (
       status IN (
         'PENDING',
         'PREPARING',
+        'PREPARED',
         'DELIVERING',
+        'ARRIVED',
         'DELIVERED',
         'CANCELLED'
       )
     ),
+
+  pickup_code VARCHAR(3) DEFAULT LPAD(FLOOR(RANDOM() * 1000)::TEXT, 3, '0'),
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP

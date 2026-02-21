@@ -23,6 +23,10 @@ const Options = () => {
   function goToSuggested(){
     navigate('/suggested');
   }
+
+  function goToOrderList(){
+    navigate('/orders-list');
+  }
   
   // Se o contexto ainda estiver carregando, pode retornar null ou carregar normal
   // if (!user) return null; 
@@ -35,7 +39,7 @@ const Options = () => {
       <a className="btn btn-primary me-2" onClick={goToSuggested}>
         <i className="fas fa-lightbulb"></i> Sugeridos
       </a>
-      <a className="btn btn-primary me-2">
+      <a className="btn btn-primary me-2" onClick={goToOrderList}>
         <i className="fas fa-box"></i> Pedidos
       </a>
       

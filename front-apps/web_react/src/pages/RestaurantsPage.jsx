@@ -50,7 +50,7 @@ export default function RestaurantsPage() {
     }
 
     try {
-      setLoadingList(true); // Garante que o loading aparece ao recarregar
+      setLoadingList(true);
       const response = await axios.get('http://localhost:3002/api/restaurants/list', {
         headers: { Authorization: `Bearer ${token}` }
       });

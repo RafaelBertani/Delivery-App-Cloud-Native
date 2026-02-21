@@ -14,10 +14,9 @@ export default function ManageRestaurantPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   
-  // Estado para visualização da imagem antes de salvar
   const [logoPreview, setLogoPreview] = useState(DEFAULT_LOGO);
 
-  // Objeto único com todos os campos editáveis
+  // 1. Adicionamos o is_open no estado inicial
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -26,10 +25,10 @@ export default function ManageRestaurantPage() {
     state: '',
     zip_code: '',
     country: 'Brasil',
-    logo: '' // Base64
+    logo: '', 
+    is_open: true 
   });
 
-  // 1. Carrega os dados atuais ao abrir a tela
   useEffect(() => {
     let isMounted = true;
     
@@ -44,7 +43,8 @@ export default function ManageRestaurantPage() {
 
         if (isMounted) {
           const data = response.data;
-          // Preenche o formulário com o que veio do banco
+          
+          // 2. Preenche o is_open com o que veio do banco
           setFormData({
             name: data.name || '',
             description: data.description || '',
@@ -53,7 +53,8 @@ export default function ManageRestaurantPage() {
             state: data.state || '',
             zip_code: data.zip_code || '',
             country: data.country || 'Brasil',
-            logo: data.logo || '' // Mantém a logo atual no state (para reenvio se necessário) ou manipula logica
+            logo: data.logo || '',
+            is_open: data.is_open !== undefined ? data.is_open : true 
           });
           
           if (data.logo) {
@@ -75,13 +76,14 @@ export default function ManageRestaurantPage() {
     return () => { isMounted = false; };
   }, [id, navigate]);
 
-  // 2. Manipula mudança nos inputs de texto
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({ 
+      ...prev, 
+      [name]: type === 'checkbox' ? checked : value 
+    }));
   };
 
-  // 3. Manipula troca de imagem (Logo)
   const handleLogoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -92,7 +94,6 @@ export default function ManageRestaurantPage() {
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        // Atualiza o preview e o form data com o novo base64
         setLogoPreview(reader.result);
         setFormData(prev => ({ ...prev, logo: reader.result }));
       };
@@ -100,12 +101,10 @@ export default function ManageRestaurantPage() {
     }
   };
 
-  // 4. Salvar Alterações
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
     
-    // Validação básica
     if (!formData.name || !formData.street || !formData.city) {
         alert("Nome, Rua e Cidade são obrigatórios.");
         return;
@@ -135,10 +134,7 @@ export default function ManageRestaurantPage() {
   return (
     <div className="container mt-4 mb-5" style={{ maxWidth: '800px' }}>
       
-      {/* --- CABEÇALHO ALTERADO --- */}
       <div className="d-flex align-items-center justify-content-between mb-4">
-        
-        {/* Lado Esquerdo: Voltar + Título */}
         <div className="d-flex align-items-center">
           <button className="btn btn-outline-secondary me-3" onClick={() => navigate(`/my-restaurants`)}>
             <i className="fas fa-arrow-left"></i> Voltar
@@ -146,12 +142,18 @@ export default function ManageRestaurantPage() {
           <h3 className="fw-bold mb-0">Editar Dados</h3>
         </div>
 
-        {/* Lado Direito: BOTÃO NOVO (Gerenciar Pratos) */}
         <button 
           className="btn btn-primary shadow-sm" 
           onClick={() => navigate(`/my-restaurants/${id}/edit-menu`)}
         >
           <i className="fas fa-utensils me-2"></i> Pratos
+        </button>
+
+        <button 
+          className="btn btn-primary shadow-sm" 
+          onClick={() => navigate(`/my-restaurants/${id}/manage-orders`)}
+        >
+          <i className="fas fa-clipboard-list me-2"></i> Gerenciar pedidos
         </button>
 
       </div>
@@ -160,15 +162,46 @@ export default function ManageRestaurantPage() {
 
       <form onSubmit={handleSubmit}>
         
+        {/* --- NOVO CARD: Status de Operação --- */}
+        <div className={`card shadow-sm mb-4 ${formData.is_open ? 'border-success' : 'border-danger'}`}>
+          <div className="card-body d-flex justify-content-between align-items-center">
+            <div>
+              <h5 className={`mb-1 fw-bold ${formData.is_open ? 'text-success' : 'text-danger'}`}>
+                <i className={`fas ${formData.is_open ? 'fa-door-open' : 'fa-door-closed'} me-2`}></i>
+                Status do Restaurante
+              </h5>
+              <p className="text-muted mb-0 small">Controle se os clientes podem fazer pedidos neste momento.</p>
+            </div>
+            
+            <div className="form-check form-switch fs-3 mb-0">
+              <input 
+                className="form-check-input" 
+                type="checkbox" 
+                role="switch" 
+                name="is_open"
+                id="isOpenSwitch"
+                checked={formData.is_open}
+                onChange={handleInputChange}
+                style={{ cursor: 'pointer' }}
+              />
+              <label className="form-check-label ms-2 fs-5" htmlFor="isOpenSwitch">
+                {formData.is_open ? (
+                  <span className="text-success fw-bold">Aberto</span>
+                ) : (
+                  <span className="text-danger fw-bold">Fechado</span>
+                )}
+              </label>
+            </div>
+          </div>
+        </div>
+        
         {/* CARD 1: Identidade Visual e Básicos */}
         <div className="card shadow-sm mb-4">
           <div className="card-header bg-white py-3">
             <h5 className="mb-0 fw-bold text-primary"><i className="fas fa-id-card me-2"></i>Informações Básicas</h5>
           </div>
           <div className="card-body">
-            
             <div className="row">
-              {/* Área da Logo */}
               <div className="col-md-4 text-center mb-4 mb-md-0 border-end">
                 <label className="form-label fw-bold d-block">Logotipo</label>
                 <div className="position-relative d-inline-block">
@@ -180,7 +213,7 @@ export default function ManageRestaurantPage() {
                     />
                     <label 
                         className="btn btn-sm btn-primary position-absolute bottom-0 end-0 rounded-circle shadow"
-                        style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'translate(-10px, -10px)' }}
+                        style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'translate(-10px, -10px)', cursor: 'pointer' }}
                         title="Alterar imagem"
                     >
                         <i className="fas fa-camera"></i>
@@ -190,7 +223,6 @@ export default function ManageRestaurantPage() {
                 <div className="text-muted small mt-2">Clique na câmera para alterar.<br/>Max: 2MB</div>
               </div>
 
-              {/* Campos de Texto */}
               <div className="col-md-8 ps-md-4">
                 <div className="mb-3">
                   <label className="form-label fw-bold">Nome do Restaurante *</label>
