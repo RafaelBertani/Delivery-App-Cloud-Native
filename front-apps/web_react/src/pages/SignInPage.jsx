@@ -85,7 +85,7 @@ export default function SignInPage() {
     <div className="container">
 
       <form className="box" onSubmit={handleSubmit}>
-        <h1>Login</h1>
+        <h2>Login</h2>
 
         <input
           type="email"

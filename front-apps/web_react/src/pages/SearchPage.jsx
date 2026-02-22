@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import "../styles/SuggestedPage.css"; // Pode manter o mesmo CSS para os cards
+import "../styles/SearchPage.css";
 import { useAuth } from '../contexts/AuthContext';
 
 const DEFAULT_LOGO = "https://cdn-icons-png.flaticon.com/512/1046/1046784.png";
@@ -73,7 +73,7 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="container mt-5 mb-5">
+    <div className="container">
       
       {/* Cabeçalho e Barra de Pesquisa */}
       <div className="row justify-content-center mb-5">
@@ -194,6 +194,10 @@ export default function SearchPage() {
           )}
         </div>
       )}
+
+      <br/>
+      <br/>
+      <br/>
     </div>
   );
 }

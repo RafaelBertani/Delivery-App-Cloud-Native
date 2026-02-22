@@ -89,25 +89,6 @@ export default function SettingsPage() {
 
         <div className="card-body p-0">
           
-          {/* Slider 1: Modo Noturno */}
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <div>
-              <h6 className="fw-bold mb-0"><i className="fas fa-moon me-2"></i>Modo Noturno</h6>
-              <small className={darkMode ? "text-light" : "text-muted"}>Alternar tema do aplicativo</small>
-            </div>
-            <div className="form-check form-switch">
-              <input 
-                className="form-check-input" 
-                type="checkbox" 
-                style={{ transform: 'scale(1.3)' }}
-                checked={darkMode}
-                onChange={handleDarkModeToggle}
-              />
-            </div>
-          </div>
-
-          <hr className="my-3 opacity-25"/>
-
           {/* Slider 2: Entregador (Server Side) */}
           <div className="d-flex justify-content-between align-items-center mb-4">
             <div>

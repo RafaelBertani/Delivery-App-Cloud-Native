@@ -6,9 +6,7 @@ import axios from 'axios';
 import { AuthProvider } from './contexts/AuthContext';
 
 import Header from "./components/Header/Header";
-import Footer from "./components/Footer/Footer";
 import Options from "./components/Options/Options";
-import HomePage from "./pages/HomePage";
 import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -51,9 +49,9 @@ function App() {
       <div className="container-fluid p-0 d-flex flex-column min-vh-100">
         <Header />
         <Options />
-        <main className="main flex-grow-1">
+        <main className="flex-grow-1 back1">
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<SearchPage />} />
             <Route path="/signIn" element={<SignInPage />} />
             <Route path="/signUp" element={<SignUpPage />} />
             <Route path="/search" element={<SearchPage />} />
@@ -69,7 +67,6 @@ function App() {
             <Route path="/my-restaurants/:id/manage-orders" element={<ManageOrdersPage />} />
           </Routes>
         </main>
-        {/* <Footer className="mt-auto"/> */}
       </div>
     </AuthProvider>
   );

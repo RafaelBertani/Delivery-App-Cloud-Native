@@ -86,7 +86,7 @@ export default function SignUpPage() {
     <div className="container">
       
       <form className="box" onSubmit={handleSubmit}>
-        <h1>Criar conta</h1>
+        <h2>Criar conta</h2>
 
         <input
           type="text"

@@ -1,6 +1,6 @@
 .header {
+  position: relative;
   background-color: rgb(174, 10, 10);
-  color: white;
   padding: 16px;
   display: flex;
   float: left;
@@ -18,7 +18,7 @@
   margin-right: auto;
 }
 
-.header-buttons {
+.box-buttons {
   top: -10px;
   padding: 0;
   margin: 0;
@@ -26,29 +26,24 @@
   gap: 12px;
 }
 
-.btn {
+.btn-header {
   padding: 8px 8px;
   border: none;
   border-radius: 15px;
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s;
+  color: rgb(0, 0, 0);
+  background-color: rgb(229, 175, 175);
+  border: 0.5px solid transparent;
 }
 
-.btn.login {
-  background-color: white;
-  color: rgb(188, 86, 17);
+.btn-header:hover {
+  background-color: rgb(228, 94, 94);
+  border: 0.5px solid #ffffff;
 }
 
-.btn.login:hover {
-  background-color: #f0f0f0;
-}
-
-.btn.signup {
-  background-color: #ffd2a6;
-  color: rgb(188, 86, 17);
-}
-
-.btn.signup:hover {
-  background-color: #ffc28c;
+.presentation {
+  color: #ffffff;
+  font-weight: bold;
 }

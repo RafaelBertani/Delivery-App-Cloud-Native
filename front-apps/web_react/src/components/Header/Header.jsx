@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import "./Header.css";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/genericLogo.png";
 import { useAuth } from "../../contexts/AuthContext";
 
 const Header = ( ) => {
@@ -27,15 +27,15 @@ const Header = ( ) => {
   return (
     <header className="header">
       <img className="logo" src={logo} alt="Logo"/> {/* seria bom uma .svg */}
-      <div className="header-buttons">
+      <div className="box-buttons">
         {user ? (
-          <div className="d-flex align-items-center">
-            <span className="me-3 fw-bold text-dark">
+          <div className="d-flex align-items-center presentation">
+            <span className="me-3">
               Olá, {user.name}
             </span>
             
             <button 
-              className="btn btn-outline-danger btn-sm" 
+              className="btn-header" 
               onClick={handleLogout}
               title="Sair da conta"
             >
@@ -44,8 +44,8 @@ const Header = ( ) => {
           </div>
         ) : (
           <>
-            <button className="btn signin" onClick={goToSignIn}>Login</button>
-            <button className="btn signup" onClick={goToSignUp}>Cadastro</button>
+            <button className="btn-header" onClick={goToSignIn}>Login</button>
+            <button className="btn-header" onClick={goToSignUp}>Cadastro</button>
           </>
         )}
       </div>
