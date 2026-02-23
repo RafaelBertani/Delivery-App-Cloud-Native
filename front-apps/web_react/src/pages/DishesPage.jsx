@@ -300,7 +300,7 @@ export default function DishesPage() {
                         </label>
                     </div>
 
-                    {/* Botões de Editar e Excluir */}
+                    {/* Botões de Editar e de Excluir */}
                     <div>
                         <button className="btn btn-sm btn-outline-primary me-2" onClick={() => handleEditClick(dish)} title="Editar">
                             <i className="fas fa-pen"></i>
