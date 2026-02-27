@@ -16,7 +16,7 @@ import 'pages/ManageOrdersPage.dart';
 import 'pages/SearchPage.dart';
 import 'pages/DeliveryPanelPage.dart';
 
-// Importe o seu menu lateral
+// Importa menu lateral
 import './components/options_drawer.dart';
 
 // Função auxiliar para o estilo dos botões do header
@@ -59,7 +59,6 @@ final GoRouter _router = GoRouter(
       navigatorKey: _shellNavigatorKey,
       builder: (BuildContext context, GoRouterState state, Widget child) {
         
-        // Simulação do seu usuário vindo do AuthContext
         final mockUser = UserModel(isDelivery: true, hasRestaurant: false);
         final bool isUserLoggedIn = false; // Simulação de estado de login
         final String userName = "Rafael"; // Simulação de nome de usuário
@@ -67,7 +66,7 @@ final GoRouter _router = GoRouter(
         return Scaffold(
           // O AppBar substitui o <Header /> do React
           appBar: AppBar(
-            toolbarHeight: 130, // Equivale ao seu height: 130px no CSS
+            toolbarHeight: 130,
             backgroundColor: const Color.fromRGBO(174, 10, 10, 1.0),
             iconTheme: const IconThemeData(color: Colors.white), 
             
@@ -133,7 +132,6 @@ final GoRouter _router = GoRouter(
             ],
           ),
           
-          // Aqui entra o seu componente importado de opções laterais
           drawer: OptionsDrawer(user: mockUser),
           
           // Onde as rotas (pages) serão renderizadas, equivalente ao <main> no React

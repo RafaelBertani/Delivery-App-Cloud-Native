@@ -18,7 +18,6 @@ class OptionsDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      // O Container permite replicar aquele fundo em gradiente do seu CSS
       child: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -57,11 +56,9 @@ class OptionsDrawer extends StatelessWidget {
             _buildMenuItem(context, Icons.lightbulb, 'Sugeridos', '/suggested'),
             _buildMenuItem(context, Icons.inventory_2, 'Pedidos', '/orders-list'),
             
-            // Lógica condicional equivalente ao seu {user?.is_delivery && ...}
             if (user?.isDelivery == true)
               _buildMenuItem(context, Icons.motorcycle, 'Painel Entregas', '/delivery-panel'),
               
-            // Lógica condicional equivalente ao seu {user?.has_restaurant && ...}
             if (user?.hasRestaurant == true)
               _buildMenuItem(context, Icons.store, 'Meus Restaurantes', '/my-restaurants'),
               
@@ -79,7 +76,7 @@ class OptionsDrawer extends StatelessWidget {
     return ListTile(
       leading: Icon(icon, color: Colors.white),
       title: Text(title, style: const TextStyle(color: Colors.white)),
-      hoverColor: const Color.fromRGBO(179, 72, 72, 1.0), // A cor do seu .btn:hover
+      hoverColor: const Color.fromRGBO(179, 72, 72, 1.0),
       onTap: () {
         Navigator.pop(context);
         context.go(route);

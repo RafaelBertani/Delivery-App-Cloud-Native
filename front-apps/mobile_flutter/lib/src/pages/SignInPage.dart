@@ -95,7 +95,7 @@ class _SignInPageState extends State<SignInPage> {
     return Center(
       child: SingleChildScrollView(
         child: Container(
-          width: 320, // Conforme seu CSS: width: 320px
+          width: 320,
           padding: const EdgeInsets.all(40),
           decoration: BoxDecoration(
             color: const Color.fromRGBO(213, 153, 153, 1.0),

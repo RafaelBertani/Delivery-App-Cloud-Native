@@ -99,7 +99,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return Center( // Centraliza a caixa na tela
       child: SingleChildScrollView( // Permite rolar a tela se o teclado abrir
         child: Container(
-          width: 340, // Largura igual do seu CSS
+          width: 340,
           padding: const EdgeInsets.all(40), // padding: 40px
           decoration: BoxDecoration(
             color: const Color.fromRGBO(213, 153, 153, 1.0), // background-color: rgb(213, 153, 153)

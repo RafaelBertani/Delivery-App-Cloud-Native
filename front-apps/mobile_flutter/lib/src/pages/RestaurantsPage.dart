@@ -5,8 +5,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-// Importe o seu Model!
 import '../models/restaurant_model.dart';
 
 const String defaultLogo = "https://cdn-icons-png.flaticon.com/512/1046/1046784.png";
