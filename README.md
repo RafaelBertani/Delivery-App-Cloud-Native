@@ -1,49 +1,349 @@
 # Delivery-App-Cloud-Native
 
-C:\Users\Rafael\Desktop\Delivery-App-Cloud-Native\infra> docker stack deploy -c docker-compose.yml delivery_app
+Projeto de **aplicativo de delivery cloud-native**, desenvolvido com foco em **arquitetura moderna**, **escalabilidade**, **segurança** e **boas práticas de engenharia de software**, simulando um cenário real de produção utilizado por empresas de médio e grande porte.
+
+O sistema foi projetado utilizando **microserviços**, **comunicação assíncrona**, **containerização**, **orquestração**, **automação de infraestrutura** e **validações robustas**, cobrindo desde backend até frontend web e mobile.
+
+---
+
+## Visão Geral da Arquitetura
+
+O projeto segue uma **arquitetura de microserviços desacoplados**, cada um com responsabilidade bem definida, comunicando-se de forma **assíncrona** via **mensageria**.
+
+### Microserviços Backend
+- **auth-service** → autenticação, autorização e emissão de JWT
+- **restaurant-service** → gestão de restaurantes e cardápios
+- **order-service** → criação e acompanhamento de pedidos
+
+Cada serviço segue o padrão **MVC**, com:
+- Controllers (camada HTTP)
+- Services (regras de negócio)
+- Models (acesso a dados)
+
+---
+
+## Tecnologias Utilizadas
+
+### Backend
+- Node.js
+- JWT (JSON Web Token)
+- Joi (validação de dados)
+- PostgreSQL
+- RabbitMQ
+- Docker
+- Docker Swarm
+- Kubernetes
+
+### Frontend
+- React + Vite (Web)
+- Flutter (Mobile)
+- Bootstrap
+
+### Infraestrutura & DevOps
+- Docker Swarm Secrets
+- Kubernetes Deployments e Services
+- Bash Scripts para automação
+- Init SQL para versionamento do banco
+
+---
+
+## Estrutura de Pastas
+
+```text
+backend/
+ ├── auth-service/
+ ├── restaurant-service/
+ └── order-service/
+
+front-apps/
+ ├── web_react/
+ └── mobile_flutter/
+
+infra/
+ ├── bin/
+ │   ├── create-db.sh
+ │   └── create-secrets.sh
+ │
+ ├── db/
+ │   └── init.sql
+ │
+ ├── k8s/
+ │   ├── apps/
+ │   │   ├── auth-deployment.yaml
+ │   │   ├── restaurant-deployment.yaml
+ │   │   ├── order-deployment.yaml
+ │   │   └── frontends.yaml
+ │   │
+ │   ├── infrastructure/
+ │   │   ├── postgres-deployment.yaml
+ │   │   └── rabbitmq-deployment.yaml
+ │   │
+ │   ├── configmap.yaml
+ │   ├── ingress.yaml
+ │   ├── namespace.yaml
+ │   ├── secret.yaml
+ │
+ └── scripts/
+     ├── build-images.sh
+     ├── deploy.sh
+     ├── cleanup.sh
+     └── monitor.sh
+```
+
+## Segurança e Autenticação
+
+- Autenticação baseada em JWT  
+- Tokens stateless, facilitando escalabilidade horizontal  
+- Secrets armazenados via Docker Swarm Secrets  
+- Nenhuma credencial sensível versionada no código  
+
+### Benefício empresarial:
+
+- Escalabilidade  
+- Segurança  
+- Compatibilidade com múltiplos clientes (Web e Mobile)  
+
+---
+
+## Por que RabbitMQ e não Kafka?
+
+A escolha do RabbitMQ foi feita considerando o escopo do projeto e o tipo de problema resolvido.
+
+### RabbitMQ
+
+- Ideal para eventos de negócio  
+- Fácil de operar  
+- Baixa latência  
+- Excelente para orquestração de workflows  
+- Menor custo operacional  
+
+### Kafka
+
+- Mais indicado para streaming de grandes volumes de dados  
+- Overhead e complexidade maiores  
+- Desnecessário para este cenário transacional  
+
+### Decisão técnica
+
+RabbitMQ atende melhor aplicações de delivery, onde confiabilidade, simplicidade e consistência são prioritárias.
+
+---
+
+## Por que Microserviços?
+
+- Escalabilidade independente por domínio  
+- Isolamento de falhas  
+- Facilidade de manutenção  
+- Evolução contínua do sistema  
+
+Microserviços não foram escolhidos por moda, mas para demonstrar domínio arquitetural e simular ambientes reais de produção.
+
+---
+
+## Por que PostgreSQL (Banco Relacional)?
+
+- Consistência ACID  
+- Relacionamentos bem definidos  
+- Integridade dos dados  
+- Ampla adoção no mercado  
+
+Aplicações de delivery exigem transações confiáveis, algo fundamental em bancos relacionais.
+
+---
+
+## Validação de Dados
+
+- Uso do Joi para validação de dados de entrada  
+- Evita dados inválidos no sistema  
+- Reduz falhas em produção  
+- Garante previsibilidade das APIs  
+
+---
+
+## Automação e DevOps
+
+Scripts Bash automatizam:
+
+- Criação do banco de dados  
+- Criação de secrets  
+- Build das imagens Docker  
+- Deploy em Docker Swarm e Kubernetes  
+- Monitoramento dos serviços  
+
+### Objetivo
+
+Reduzir erro humano e garantir reprodutibilidade do ambiente.
+
+---
+
+## Docker Swarm e Kubernetes
+
+- Docker Swarm: simplicidade e secrets nativos  
+- Kubernetes: padrão de mercado, escalabilidade e alta disponibilidade  
+
+O projeto suporta ambos, demonstrando flexibilidade e entendimento de ambientes reais.
+
+## Como Rodar o Projeto
+
+O projeto possui **scripts Bash** para automatizar todo o ciclo de build, deploy, monitoramento e encerramento da aplicação, reduzindo erros manuais e facilitando a execução em ambientes reais.
+
+> **Pré-requisitos**
+> - Docker instalado
+> - Docker Swarm inicializado (`docker swarm init`)
+> - Bash (Linux / WSL / macOS)
+> - Portas necessárias liberadas
+
+---
+
+# Passo a passo para subir o ambiente
+
+### 1️⃣ Build das imagens Docker
+
+Responsável por construir todas as imagens dos microserviços e frontends.
+
+```bash
+bash infra/scripts/build-images.sh
+```
+
+### 2️⃣ Criação dos Secrets (primeira execução)
+Cria os Docker Swarm Secrets utilizados pelos serviços (credenciais, JWT secret, etc).
+Bashbash infra/bin/create-secrets.sh
+
+- ⚠️ Importante (primeira vez):
+
+Altere as senhas genéricas fornecidas no script para valores seguros da sua máquina
+Ajuste também o arquivo docker-compose.yml nas variáveis:YAMLRABBITMQ_DEFAULT_USER
+RABBITMQ_DEFAULT_PASS
+
+📌 Motivo do ajuste:
+Devido a um bug ainda não resolvido envolvendo leitura de arquivos de configuração e inicialização do RabbitMQ.
+
+### 3️⃣ Deploy da aplicação
+Realiza o deploy completo da infraestrutura e dos serviços no Docker Swarm / Kubernetes (dependendo da configuração).
+```bash
+bash infra/scripts/deploy.sh
+```
+
+> Esse script:
+
+> - Sobe banco de dados
+> - Sobe RabbitMQ
+> - Publica microserviços
+> - Publica frontends
 
 
-docker build -t auth-service:latest ../backend/auth-service
+### 4️⃣ Monitoramento (opcional)
+Permite acompanhar o estado dos serviços durante e após o deploy.
+```bash
+bash infra/scripts/monitor.sh
+```
+> Útil para:
 
-docker stack deploy -c docker-compose.yml delivery_app
-docker stack rm delivery_app
+> - Verificar containers
+> - Diagnosticar falhas
+> - Acompanhar inicialização dos serviços
 
-docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 
-docker exec -it delivery_app psql -U postgres
-docker exec -it delivery_app psql -U postgres -c "CREATE DATABASE postgres_db_delivery;"
-\c postgres_db_delivery
-CREATE TABLE users ( id SERIAL PRIMARY KEY, name VARCHAR(100) NOT NULL, email VARCHAR(100) UNIQUE NOT NULL, password VARCHAR(255) NOT NULL, profile_pic BYTEA, joined_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, role VARCHAR(10) CHECK (role IN ('ADM', 'USER')) );
-CREATE TABLE user_pic ( id SERIAL PRIMARY KEY, user_id INT NOT NULL REFERENCES users (id) ON DELETE CASCADE, image_data BYTEA NOT NULL, image_name VARCHAR(255), uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP );
+### 5️⃣ Encerrar a execução (cleanup)
+Remove serviços, containers e recursos criados durante o deploy.
+```bash
+bash infra/scripts/cleanup.sh
+```
+> Recomendado para:
 
-docker exec -it delivery_app psql -U postgres
-docker exec -it delivery_app psql -U postgres -c "CREATE DATABASE postgres_db_delivery;"
-\c postgres_db_delivery
-CREATE TABLE users ( id SERIAL PRIMARY KEY, name VARCHAR(100) NOT NULL, email VARCHAR(100) UNIQUE NOT NULL, password VARCHAR(255) NOT NULL, profile_pic BYTEA, joined_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, phone VARCHAR(20) NOT NULL, role VARCHAR(10) CHECK (role IN ('ADM', 'USER')), is_account_active BOOLEAN DEFAULT TRUE );
-CREATE TABLE addresses (  id SERIAL PRIMARY KEY, user_id INT REFERENCES users(id), street VARCHAR(255) NOT NULL, city VARCHAR(100) NOT NULL, state VARCHAR(50) NOT NULL, zip_code VARCHAR(20) NOT NULL, country VARCHAR(50) DEFAULT 'Brasil', is_active BOOLEAN DEFAULT FALSE );
-CREATE TABLE orders (  id SERIAL PRIMARY KEY, user_id INT REFERENCES users(id), total_amount DECIMAL(10,2), status VARCHAR(20) CHECK (status IN ('PENDING','PREPARING','DELIVERING','DELIVERED','CANCELLED')), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP );
-CREATE TABLE payment_cards (  id SERIAL PRIMARY KEY, user_id INT REFERENCES users(id) ON DELETE CASCADE, cardholder_name VARCHAR(100) NOT NULL, card_number CHAR(16) NOT NULL, expiration_month CHAR(2) NOT NULL,  expiration_year CHAR(4) NOT NULL, card_brand VARCHAR(20), is_default BOOLEAN DEFAULT FALSE, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP );
+> - Finalizar testes
+> - Limpar ambiente
+> - Evitar consumo desnecessário de recursos
 
-docker exec -i delivery_app_postgres.1.i1tply90qntp86qat7gllhufy \
-psql -U postgres < infra/db/init.sql
 
-docker exec -it delivery_app_postgres.1.i1tply90qntp86qat7gllhufy psql -U postgres
+# To-Do List / Próximos Passos – Evolução do Projeto
 
-cd .\bin\                                                  
-PS C:\Users\Rafael\Desktop\Delivery-App-Cloud-Native\infra\bin> ./create-secrets.sh                                        
-PS C:\Users\Rafael\Desktop\Delivery-App-Cloud-Native\infra\bin> cd ..
+Roadmap com foco em **escalabilidade**, **experiência do usuário** e **cenários reais de produção**
 
-docker build -t auth-service:latest ../backend/auth-service ; docker build -t restaurant-service:latest ../backend/restaurant-service ; docker build -t order-service:latest ../backend/order-service
+## Fundações & Correções Críticas
 
-#kubectl apply -f secret.yaml
+1. **Corrigir bug de inicialização do RabbitMQ**  
+   - Problema atual: exige configuração manual no docker-compose.yml  
+   - Meta: ler 100% das configurações via arquivos + Docker Secrets  
+   - Impacto: elimina workarounds, facilita CI/CD, ambientes múltiplos 
 
-  #kubectl apply -f k8s/infrastructure/
-  #kubectl apply -f k8s/apps/
+## Prioridade Média-Alta – Segurança & Experiência do Usuário
 
-  #kubectl apply -f configmap.yaml
-  #kubectl apply -f secret.yaml
-  #kubectl apply -f k8s/infrastructure/postgres-deployment.yaml
-  #kubectl apply -f k8s/infrastructure/rabbitmq-deployment.yaml
+3. **Autenticação e Recuperação de Conta**  
+   - [ ] Login social (Google, Apple, Facebook?)  
+   - [ ] Fluxo de recuperação de senha via e-mail  
+     - Token temporário com expiração (ex: 15–30 min)  
+     - Template de e-mail bonito e seguro  
+   - [ ] Rate limiting no envio de e-mails de recuperação  
+   - [ ] Auditoria de segurança (tabela de tokens, invalidação após uso)
 
-  http://localhost:8080/
-  http://localhost:8081/
+4. **Sistema de Pagamentos – Fase 1 (MVP)**  
+
+## Prioridade Média – Features de Valor Percebido Alto
+
+5. **Funcionalidades de Localização (GPS) – MVP**  
+   - [ ] Mapa em tempo real no app do cliente  
+     - Posição do entregador (já possui a latitude e longitude na tabela)
+     - Posição estimada do restaurante → cliente  
+   - [ ] Exibição de rota (polyline)  
+   - [ ] Status visual do pedido (preparando, a caminho, entregue)  
+   - Decisão técnica inicial:  
+     - OpenStreetMap + Leaflet (grátis)  
+     - ou Google Maps SDK (custo x qualidade)  
+
+6. **Carrinho Multi-Restaurante**  
+   - [ ] Permitir itens de múltiplos restaurantes no mesmo carrinho  
+   - [ ] Regras de negócio a definir:  
+     - Uma taxa de entrega única ou por restaurante?  
+     - Checkout gera 1 pedido ou N pedidos vinculados?  
+     - Como fica status e rastreamento?  
+
+## Backlog – Melhorias & Otimizações Futuras
+
+- Dark mode / temas no frontend  
+- Internacionalização (i18n) – pelo menos pt-BR + en-US
+
+## Demonstração – Projeto em Execução
+
+Aqui estão algumas telas do sistema rodando:
+
+[3–5 imagens aqui com <img> ou GitHub markdown]
+
+## Diagrama de Arquitetura (C4 – Containers)
+
+<img src="https://raw.githubusercontent.com/SEU_USER/REPO/main/docs/architecture-c4.png" width="800" alt="Diagrama C4 - Containers">
+
+Legenda: Fluxo principal de criação de pedido (comunicação assíncrona via RabbitMQ).
+
+## 🗄️ Modelo de Dados (Diagrama ER)
+
+<img src="https://raw.githubusercontent.com/SEU_USER/REPO/main/docs/er-diagram.png" width="700" alt="Diagrama Entidade-Relacionamento">
+
+Principais entidades e relacionamentos implementados no PostgreSQL.
+
+## Documentação da API (Swagger/OpenAPI)
+
+A documentação interativa está disponível em:  
+→ http://localhost:3000/api-docs (ao rodar localmente)  
+
+Ou veja alguns endpoints principais:
+
+<img src="https://raw.githubusercontent.com/SEU_USER/REPO/main/docs/swagger-example.png" width="800" alt="Exemplo Swagger – POST /orders">
+
+## Documentação Técnica
+
+<details>
+  <summary> Demonstração Visual (Screenshots & GIFs)</summary>
+  </details>
+
+<details>
+  <summary> Arquitetura do Sistema</summary>
+  </details>
+
+<details>
+  <summary> Modelagem de Dados (ERD)</summary>
+  </details>
+
+<details>
+  <summary> API Reference (Swagger)</summary>
+  </details>
