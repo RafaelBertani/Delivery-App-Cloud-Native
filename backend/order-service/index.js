@@ -13,6 +13,11 @@ app.use(express.json());
 
 app.use('/api/orders', routes);
 
+// Health check endpoint
+app.get('/api/orders/health', (req, res) => {
+  res.status(200).json({ status: 'OK', service: 'orders-service' });
+});
+
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`UserService is running on http://0.0.0.0:${PORT}`);
 });
