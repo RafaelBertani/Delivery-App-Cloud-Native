@@ -34,3 +34,16 @@ PS C:\Users\Rafael\Desktop\Delivery-App-Cloud-Native\infra\bin> ./create-secrets
 PS C:\Users\Rafael\Desktop\Delivery-App-Cloud-Native\infra\bin> cd ..
 
 docker build -t auth-service:latest ../backend/auth-service ; docker build -t restaurant-service:latest ../backend/restaurant-service ; docker build -t order-service:latest ../backend/order-service
+
+#kubectl apply -f secret.yaml
+
+  #kubectl apply -f k8s/infrastructure/
+  #kubectl apply -f k8s/apps/
+
+  #kubectl apply -f configmap.yaml
+  #kubectl apply -f secret.yaml
+  #kubectl apply -f k8s/infrastructure/postgres-deployment.yaml
+  #kubectl apply -f k8s/infrastructure/rabbitmq-deployment.yaml
+
+  http://localhost:8080/
+  http://localhost:8081/
