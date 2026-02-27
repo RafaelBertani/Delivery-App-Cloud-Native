@@ -162,7 +162,6 @@ async function getTenRandomRestaurants() {
     return restaurants;
     
   } catch (error) {
-    // O erro será capturado pelo bloco catch do seu controller
     throw error; 
   }
   
