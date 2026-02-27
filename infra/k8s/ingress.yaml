@@ -1,0 +1,88 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: delivery-app-ingress
+  namespace: delivery-app
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  
+  # ---------------------------------------------------------
+  # HOST 1: DOMÍNIO PRINCIPAL (Frontend React + APIs)
+  # ---------------------------------------------------------
+  - host: delivery-app.local
+    http:
+      paths:
+      # --- Rotas dos Microsserviços Node.js ---
+      - path: /api/auth(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: auth-service
+            port:
+              number: 3001
+      
+      - path: /api/restaurants(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: restaurant-service
+            port:
+              number: 3002
+              
+      - path: /api/orders(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: order-service
+            port:
+              number: 3003
+
+      # --- Rota do Frontend React (Deve ser a última deste host) ---
+      - path: /()(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: frontend-react
+            port:
+              number: 80
+
+  # ---------------------------------------------------------
+  # HOST 2: SUBDOMÍNIO (Frontend Flutter + APIs)
+  # ---------------------------------------------------------
+  - host: flutter.delivery-app.local
+    http:
+      paths:
+      - path: /api/auth(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: auth-service
+            port:
+              number: 3001
+      
+      - path: /api/restaurants(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: restaurant-service
+            port:
+              number: 3002
+              
+      - path: /api/orders(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: order-service
+            port:
+              number: 3003
+
+      # --- Rota do Frontend Flutter (Deve ser a última deste host) ---
+      - path: /()(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: frontend-flutter
+            port:
+              number: 80

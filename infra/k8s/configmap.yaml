@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: delivery-app-config
+  namespace: delivery-app
+data:
+  # Portas dos Microsserviços (Node.js)
+  AUTH_SERVICE_PORT: "3001"
+  RESTAURANT_SERVICE_PORT: "3002"
+  ORDER_SERVICE_PORT: "3003"
+  
+  # Configurações do RabbitMQ
+  RABBITMQ_HOST: "rabbitmq" # Nome do Service do RabbitMQ no Kubernetes
+  RABBITMQ_PORT: "5672"
+
+  # Configurações de Banco de Dados (Host padrão)
+  POSTGRES_HOST: "postgres" # Nome do Service do Postgres no Kubernetes
+  POSTGRES_PORT: "5432"
+
+  # Ambiente
+  NODE_ENV: "production"

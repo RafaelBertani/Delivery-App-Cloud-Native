@@ -1,0 +1,79 @@
+# 1. Pedido de Volume Persistente (Equivalente ao postgres_data do compose)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: delivery-app
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi # Pode ajustar o tamanho conforme necessário
+
+---
+# 2. Deployment do PostgreSQL
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: delivery-app
+spec:
+  replicas: 1
+  # Estratégia "Recreate" é essencial para bases de dados com volumes ReadWriteOnce,
+  # garantindo que o pod antigo é destruído antes do novo se ligar ao volume.
+  strategy:
+    type: Recreate 
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: postgres
+          image: postgres:17.4
+          ports:
+            - containerPort: 5432
+          env:
+            # O Postgres suporta a leitura nativa a partir de ficheiros (_FILE)
+            - name: POSTGRES_USER_FILE
+              value: "/run/secrets/postgres_user"
+            - name: POSTGRES_PASSWORD_FILE
+              value: "/run/secrets/postgres_password"
+            - name: POSTGRES_DB_FILE
+              value: "/run/secrets/postgres_db_delivery"
+          volumeMounts:
+            # Montagem do volume persistente
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+            # Montagem do Secret como ficheiros físicos
+            - name: secrets-volume
+              mountPath: /run/secrets
+              readOnly: true
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+        - name: secrets-volume
+          secret:
+            secretName: delivery-app-secrets
+
+---
+# 3. Serviço de Rede (Exposição interna)
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: delivery-app
+spec:
+  selector:
+    app: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+  type: ClusterIP
