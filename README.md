@@ -9,7 +9,7 @@ Microserviços • Docker Swarm + Kubernetes • PostgreSQL • RabbitMQ • Rea
 - [Estrutura de Pastas](#estrutura-de-pastas)
 - [Como Rodar o Projeto](#como-rodar-o-projeto)
 - [To-Do List / Próximos Passos](#to-do-list--próximos-passos--evolução-do-projeto)
-- [Demonstração](#demonstração--projeto-em-execução)
+- [Demonstração do Projeto](#demonstração-do-projeto)
 - [Diagramas UML](#diagramas-uml)
 - [Modelo de Dados](#modelo-de-dados-diagrama-er)
 
@@ -217,7 +217,7 @@ O projeto possui **scripts Bash** para automatizar todo o ciclo de build, deploy
 
 # Passo a passo para subir o ambiente
 
-### 1️⃣ Build das imagens Docker
+### 1- Build das imagens Docker
 
 Responsável por construir todas as imagens dos microserviços e frontends.
 
@@ -225,7 +225,7 @@ Responsável por construir todas as imagens dos microserviços e frontends.
 bash infra/scripts/build-images.sh
 ```
 
-### 2️⃣ Criação dos Secrets (primeira execução)
+### 2- Criação dos Secrets (primeira execução)
 Cria os Docker Swarm Secrets utilizados pelos serviços (credenciais, JWT secret, etc).
 Bashbash infra/bin/create-secrets.sh
 
@@ -235,11 +235,11 @@ Altere as senhas genéricas fornecidas no script para valores seguros da sua má
 Ajuste também o arquivo docker-compose.yml nas variáveis:YAMLRABBITMQ_DEFAULT_USER
 RABBITMQ_DEFAULT_PASS
 
-📌 Motivo do ajuste:
+Motivo do ajuste:
 Devido a um bug ainda não resolvido envolvendo leitura de arquivos de configuração e inicialização do RabbitMQ.
 (explicação detalhada do bug)
 
-### 3️⃣ Deploy da aplicação
+### 3- Deploy da aplicação
 Realiza o deploy completo da infraestrutura e dos serviços no Docker Swarm / Kubernetes (dependendo da configuração).
 ```bash
 bash infra/scripts/deploy.sh
@@ -252,8 +252,11 @@ bash infra/scripts/deploy.sh
 > - Publica microserviços
 > - Publica frontends
 
+O Frontend React estará acessível em http://localhost:8080/
+O Frontend Flutter estará acessível em http://localhost:8081/
 
-### 4️⃣ Monitoramento (opcional)
+
+### 4- Monitoramento (opcional)
 Permite acompanhar o estado dos serviços durante e após o deploy.
 ```bash
 bash infra/scripts/monitor.sh
@@ -265,7 +268,7 @@ bash infra/scripts/monitor.sh
 > - Acompanhar inicialização dos serviços
 
 
-### 5️⃣ Encerrar a execução (cleanup)
+### 5- Encerrar a execução (cleanup)
 Remove serviços, containers e recursos criados durante o deploy.
 ```bash
 bash infra/scripts/cleanup.sh
@@ -325,7 +328,7 @@ Roadmap com foco em **escalabilidade**, **experiência do usuário** e **cenári
 - Dark mode / temas no frontend  
 - Internacionalização (i18n) – pelo menos pt-BR + en-US
 
-# Demonstração - Projeto em Execução
+# Demonstração do Projeto
 
 Aqui estão algumas telas do sistema rodando:
 
@@ -333,16 +336,20 @@ Aqui estão algumas telas do sistema rodando:
 
 # Diagramas UML
 
-<img src="./docs/astahUML/Sequence-Diagram-Login.png" width="800" alt="Diagrama UML - Sequence"> Diagrama de sequência - login
+<img src="./docs/astahUML/Sequence-Diagram-Login.png" width="800" alt="Diagrama UML - Sequence">
+Diagrama de sequência - login
 
 
-<img src="./docs/astahUML/Sequence-Diagram-Order.png" width="800" alt="Diagrama UML - Sequence"> Diagrama de sequência - criar pedido
+<img src="./docs/astahUML/Sequence-Diagram-Order.png" width="800" alt="Diagrama UML - Sequence">
+Diagrama de sequência - criar pedido
 
 
-<img src="./docs/astahUML/Sequence-Diagram-CreateNewRestaurant.png" width="800" alt="Diagrama UML - Sequence"> Diagrama de sequência - cadastrar restaurante
+<img src="./docs/astahUML/Sequence-Diagram-CreateNewRestaurant.png" width="800" alt="Diagrama UML - Sequence">
+Diagrama de sequência - cadastrar restaurante
 
 
-<img src="./docs/astahUML/Sequence Diagram - Login.asta" width="800" alt="Diagrama UML - Deployment"> Diagrama de implementação/deploy
+<img src="./docs/astahUML/Deployment-Diagram.png" width="800" alt="Diagrama UML - Deployment">
+Diagrama de implementação/deploy
 
 
 # Modelo de Dados (Diagrama ER)

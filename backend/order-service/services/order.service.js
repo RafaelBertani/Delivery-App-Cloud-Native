@@ -15,7 +15,7 @@ async function registerOrder(userId, restaurantId, items) {
       throw new Error("Você precisa ter um endereço ativo para fazer um pedido.");
     }
 
-    // 2. Valida restaurante... (código que você já tem)
+    // 2. Valida restaurante...
     const restCheck = await client.query('SELECT is_open FROM restaurants WHERE id = $1', [restaurantId]);
     if (restCheck.rows.length === 0) throw new Error('Restaurante inválido.');
     if (!restCheck.rows[0].is_open) throw new Error('O restaurante está fechado no momento.');
@@ -23,7 +23,7 @@ async function registerOrder(userId, restaurantId, items) {
     let totalAmount = 0;
     const validatedItems = [];
 
-    // 3. Valida itens e preços... (código que você já tem)
+    // 3. Valida itens e preços...
     for (const item of items) {
       const dishRes = await client.query('SELECT price, is_available FROM dishes WHERE id = $1 AND restaurant_id = $2', [item.dish_id, restaurantId]);
       if (dishRes.rows.length === 0) throw new Error(`Prato ID ${item.dish_id} inválido.`);

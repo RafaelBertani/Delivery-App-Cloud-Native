@@ -52,10 +52,10 @@ spec:
   selector:
     app: frontend-react
   ports:
-  - port: 80
+  - port: 8080
     targetPort: 80
     protocol: TCP
-  type: LoadBalancer # <-- Alterado para expor no localhost:80
+  type: LoadBalancer
 
 ---
 # ==========================================

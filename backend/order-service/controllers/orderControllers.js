@@ -23,7 +23,7 @@ async function createOrder(req, res) {
   } catch (error) {
     console.error('Erro ao criar pedido:', error);
     
-    // Tratamento amigável para erros conhecidos (ex: restaurante fechado, prato esgotado)
+    // Tratamento para erros conhecidos (ex: restaurante fechado, prato esgotado)
     if (error.message.includes('inválido') || error.message.includes('fechado') || error.message.includes('esgotado')) {
       return res.status(400).json({ message: error.message });
     }
