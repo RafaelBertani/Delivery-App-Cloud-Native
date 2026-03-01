@@ -65,6 +65,17 @@ Cada serviço expõe o endpoint GET /health que valida:
 
 - Uptime: Tempo de atividade do processo.
 
+
+### Resumo das portas utilizadas
+| Serviço               | Porta Host | Porta Container |
+|-----------------------|------------|-----------------|
+| Auth Service          | 3001       | 3001            |
+| Restaurant Service    | 3002       | 3002            |
+| Order Service         | 3003       | 3003            |
+| PostgreSQL            | 5432       | 5432            |
+| RabbitMQ (Broker)     | 5672       | 5672            |
+| RabbitMQ (Painel)     | 15672      | 15672           |
+
 ---
 
 ## Estrutura de Pastas
@@ -81,8 +92,7 @@ front-apps/
 
 infra/
  ├── bin/
- │   ├── create-db.sh
- │   └── create-secrets.sh
+ │   └── create-db.sh
  │
  ├── db/
  │   └── init.sql
@@ -132,7 +142,6 @@ A escolha do RabbitMQ foi feita considerando o escopo do projeto e o tipo de pro
 ### RabbitMQ
 
 - Ideal para eventos de negócio  
-- Fácil de operar  
 - Baixa latência  
 - Excelente para orquestração de workflows  
 - Menor custo operacional  
@@ -225,21 +234,7 @@ Responsável por construir todas as imagens dos microserviços e frontends.
 bash infra/scripts/build-images.sh
 ```
 
-### 2- Criação dos Secrets (primeira execução)
-Cria os Docker Swarm Secrets utilizados pelos serviços (credenciais, JWT secret, etc).
-Bashbash infra/bin/create-secrets.sh
-
-- ⚠️ Importante (primeira vez):
-
-Altere as senhas genéricas fornecidas no script para valores seguros da sua máquina
-Ajuste também o arquivo docker-compose.yml nas variáveis:YAMLRABBITMQ_DEFAULT_USER
-RABBITMQ_DEFAULT_PASS
-
-Motivo do ajuste:
-Devido a um bug ainda não resolvido envolvendo leitura de arquivos de configuração e inicialização do RabbitMQ.
-(explicação detalhada do bug)
-
-### 3- Deploy da aplicação
+### 2- Deploy da aplicação
 Realiza o deploy completo da infraestrutura e dos serviços no Docker Swarm / Kubernetes (dependendo da configuração).
 ```bash
 bash infra/scripts/deploy.sh
@@ -256,7 +251,7 @@ O Frontend React estará acessível em http://localhost:8080/
 O Frontend Flutter estará acessível em http://localhost:8081/
 
 
-### 4- Monitoramento (opcional)
+### 3- Monitoramento (opcional)
 Permite acompanhar o estado dos serviços durante e após o deploy.
 ```bash
 bash infra/scripts/monitor.sh
@@ -267,6 +262,12 @@ bash infra/scripts/monitor.sh
 > - Diagnosticar falhas
 > - Acompanhar inicialização dos serviços
 
+
+### 4- Criação das relações (primeira execução)
+Executar o script que cria todas as relações necessárias no postgres:
+```bash
+bash infra/bin/create-db.sh
+```
 
 ### 5- Encerrar a execução (cleanup)
 Remove serviços, containers e recursos criados durante o deploy.
@@ -286,14 +287,11 @@ Roadmap com foco em **escalabilidade**, **experiência do usuário** e **cenári
 
 ## Fundações & Correções Críticas
 
-1. **Corrigir bug de inicialização do RabbitMQ**  
-   - Problema atual: exige configuração manual no docker-compose.yml  
-   - Meta: ler 100% das configurações via arquivos + Docker Secrets  
-   - Impacto: elimina workarounds, facilita CI/CD, ambientes múltiplos 
+Nenhuma restante no momento.
 
 ## Prioridade Média-Alta - Segurança & Experiência do Usuário
 
-3. **Autenticação e Recuperação de Conta**  
+1. **Autenticação e Recuperação de Conta**  
    - [ ] Login social (Google, Apple, Facebook?)  
    - [ ] Fluxo de recuperação de senha via e-mail  
      - Token temporário com expiração (ex: 15–30 min)  
@@ -301,12 +299,12 @@ Roadmap com foco em **escalabilidade**, **experiência do usuário** e **cenári
    - [ ] Rate limiting no envio de e-mails de recuperação  
    - [ ] Auditoria de segurança (tabela de tokens, invalidação após uso)
 
-4. **Sistema de Pagamentos**  
+2. **Sistema de Pagamentos**  
   - [ ] Integração com Stripe em modo Test (Sandbox)
 
 ## Prioridade Média – Features de Valor Percebido Alto
 
-5. **Funcionalidades de Localização (GPS) – MVP**  
+3. **Funcionalidades de Localização (GPS) – MVP**  
    - [ ] Mapa em tempo real no app do cliente  
      - Posição do entregador (já possui a latitude e longitude na tabela)
      - Posição estimada do restaurante → cliente  
@@ -316,7 +314,7 @@ Roadmap com foco em **escalabilidade**, **experiência do usuário** e **cenári
      - OpenStreetMap + Leaflet (grátis)  
      - ou Google Maps SDK (custo x qualidade)  
 
-6. **Carrinho Multi-Restaurante**  
+4. **Carrinho Multi-Restaurante**  
    - [ ] Permitir itens de múltiplos restaurantes no mesmo carrinho  
    - [ ] Regras de negócio a definir:  
      - Uma taxa de entrega única ou por restaurante?  
