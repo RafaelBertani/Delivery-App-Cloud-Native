@@ -1,17 +1,25 @@
 # Delivery-App-Cloud-Native
 
+<image-card alt="Node.js" src="https://img.shields.io/badge/Node.js-20.x-green" ></image-card>
+<image-card alt="Docker" src="https://img.shields.io/badge/Docker-✓-blue" ></image-card>
+<image-card alt="Kubernetes" src="https://img.shields.io/badge/Kubernetes-✓-326CE5" ></image-card>
+<image-card alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-16-blue" ></image-card>
+<image-card alt="RabbitMQ" src="https://img.shields.io/badge/RabbitMQ-3-orange" ></image-card>
+<image-card alt="React" src="https://img.shields.io/badge/React-%2320232a.svg?logo=react&logoColor=%2361DAFB" ></image-card>
+<image-card alt="Flutter" src="https://img.shields.io/badge/Flutter-02569B?logo=flutter&logoColor=white" ></image-card>
+
 Microserviços • Docker Swarm + Kubernetes • PostgreSQL • RabbitMQ • React + Flutter
 
 ## Índice
 
-- [Visão Geral](#visão-geral)
-- [Decisões de Arquitetura](#decisões-de-arquitetura)
-- [Tecnologias](#tecnologias)
-- [Estrutura do Projeto](#estrutura-do-projeto)
-- [Como Rodar](#como-rodar)
-- [Segurança Implementada](#segurança)
-- [Demonstração](#demonstração)
-- [To-do List](#todolist)
+- [Visão Geral da Arquitetura](#visão-geral-da-arquitetura)
+- [Tecnologias Utilizadas e Decisões de Arquitetura](#tecnologias-utilizadas)
+- [Estrutura de Pastas](#estrutura-de-pastas)
+- [Como Rodar o Projeto](#como-rodar-o-projeto)
+- [To-Do List / Próximos Passos](#to-do-list--próximos-passos--evolução-do-projeto)
+- [Demonstração](#demonstração--projeto-em-execução)
+- [Diagramas UML](#diagramas-uml)
+- [Modelo de Dados](#modelo-de-dados-diagrama-er)
 
 Projeto de **aplicativo de delivery cloud-native**, desenvolvido com foco em **arquitetura moderna**, **escalabilidade**, **segurança** e **boas práticas de engenharia de software**, simulando um cenário real de produção utilizado por empresas de médio e grande porte.
 
@@ -221,7 +229,7 @@ O projeto possui **scripts Bash** para automatizar todo o ciclo de build, deploy
 
 Responsável por construir todas as imagens dos microserviços e frontends.
 
-```bash
+```
 bash infra/scripts/build-images.sh
 ```
 
@@ -277,7 +285,7 @@ bash infra/scripts/cleanup.sh
 > - Evitar consumo desnecessário de recursos
 
 
-# To-Do List / Próximos Passos – Evolução do Projeto
+# To-Do List / Próximos Passos - Evolução do Projeto
 
 Roadmap com foco em **escalabilidade**, **experiência do usuário** e **cenários reais de produção**
 
@@ -288,7 +296,7 @@ Roadmap com foco em **escalabilidade**, **experiência do usuário** e **cenári
    - Meta: ler 100% das configurações via arquivos + Docker Secrets  
    - Impacto: elimina workarounds, facilita CI/CD, ambientes múltiplos 
 
-## Prioridade Média-Alta – Segurança & Experiência do Usuário
+## Prioridade Média-Alta - Segurança & Experiência do Usuário
 
 3. **Autenticação e Recuperação de Conta**  
    - [ ] Login social (Google, Apple, Facebook?)  
@@ -320,25 +328,32 @@ Roadmap com foco em **escalabilidade**, **experiência do usuário** e **cenári
      - Checkout gera 1 pedido ou N pedidos vinculados?  
      - Como fica status e rastreamento?  
 
-## Backlog – Melhorias & Otimizações Futuras
+## Backlog - Melhorias & Otimizações Futuras
 
 - Dark mode / temas no frontend  
 - Internacionalização (i18n) – pelo menos pt-BR + en-US
 
-## Demonstração – Projeto em Execução
+# Demonstração - Projeto em Execução
 
 Aqui estão algumas telas do sistema rodando:
 
 [3–5 imagens aqui com <img> ou GitHub markdown]
 
-## Diagrama de Arquitetura (C4 – Containers)
+# Diagramas UML
 
-<img src="https://raw.githubusercontent.com/SEU_USER/REPO/main/docs/architecture-c4.png" width="800" alt="Diagrama C4 - Containers">
+<img src="./docs/astahUML/Sequence-Diagram-Login.png" width="800" alt="Diagrama UML - Sequence">
+Diagrama de sequência - login
 
-Legenda: Fluxo principal de criação de pedido (comunicação assíncrona via RabbitMQ).
+<img src="./docs/astahUML/Sequence-Diagram-Order.png" width="800" alt="Diagrama UML - Sequence">
+Diagrama de sequência - criar pedido
 
-## 🗄️ Modelo de Dados (Diagrama ER)
+<img src="./docs/astahUML/Sequence-Diagram-CreateNewRestaurant.png" width="800" alt="Diagrama UML - Sequence">
+Diagrama de sequência - cadastrar restaurante
 
-<img src="./docs/images/ERD.png" width="700" alt="Diagrama Entidade-Relacionamento">
+<img src="./docs/astahUML/Sequence Diagram - Login.asta" width="800" alt="Diagrama UML - Deployment">
+Diagrama de implementação/deploy
 
+# Modelo de Dados (Diagrama ER)
+
+<img src="./docs/db/ERD.png" width="700" alt="Diagrama Entidade-Relacionamento">
 Principais entidades e relacionamentos implementados no PostgreSQL.
