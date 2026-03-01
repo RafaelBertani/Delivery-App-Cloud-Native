@@ -1,13 +1,5 @@
 # Delivery-App-Cloud-Native
 
-<image-card alt="Node.js" src="https://img.shields.io/badge/Node.js-20.x-green" ></image-card>
-<image-card alt="Docker" src="https://img.shields.io/badge/Docker-✓-blue" ></image-card>
-<image-card alt="Kubernetes" src="https://img.shields.io/badge/Kubernetes-✓-326CE5" ></image-card>
-<image-card alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-16-blue" ></image-card>
-<image-card alt="RabbitMQ" src="https://img.shields.io/badge/RabbitMQ-3-orange" ></image-card>
-<image-card alt="React" src="https://img.shields.io/badge/React-%2320232a.svg?logo=react&logoColor=%2361DAFB" ></image-card>
-<image-card alt="Flutter" src="https://img.shields.io/badge/Flutter-02569B?logo=flutter&logoColor=white" ></image-card>
-
 Microserviços • Docker Swarm + Kubernetes • PostgreSQL • RabbitMQ • React + Flutter
 
 ## Índice
@@ -341,17 +333,17 @@ Aqui estão algumas telas do sistema rodando:
 
 # Diagramas UML
 
-<img src="./docs/astahUML/Sequence-Diagram-Login.png" width="800" alt="Diagrama UML - Sequence">
-Diagrama de sequência - login
+<img src="./docs/astahUML/Sequence-Diagram-Login.png" width="800" alt="Diagrama UML - Sequence"> Diagrama de sequência - login
 
-<img src="./docs/astahUML/Sequence-Diagram-Order.png" width="800" alt="Diagrama UML - Sequence">
-Diagrama de sequência - criar pedido
 
-<img src="./docs/astahUML/Sequence-Diagram-CreateNewRestaurant.png" width="800" alt="Diagrama UML - Sequence">
-Diagrama de sequência - cadastrar restaurante
+<img src="./docs/astahUML/Sequence-Diagram-Order.png" width="800" alt="Diagrama UML - Sequence"> Diagrama de sequência - criar pedido
 
-<img src="./docs/astahUML/Sequence Diagram - Login.asta" width="800" alt="Diagrama UML - Deployment">
-Diagrama de implementação/deploy
+
+<img src="./docs/astahUML/Sequence-Diagram-CreateNewRestaurant.png" width="800" alt="Diagrama UML - Sequence"> Diagrama de sequência - cadastrar restaurante
+
+
+<img src="./docs/astahUML/Sequence Diagram - Login.asta" width="800" alt="Diagrama UML - Deployment"> Diagrama de implementação/deploy
+
 
 # Modelo de Dados (Diagrama ER)
 
