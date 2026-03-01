@@ -1,5 +1,18 @@
 # Delivery-App-Cloud-Native
 
+Microserviços • Docker Swarm + Kubernetes • PostgreSQL • RabbitMQ • React + Flutter
+
+## Índice
+
+- [Visão Geral](#visão-geral)
+- [Decisões de Arquitetura](#decisões-de-arquitetura)
+- [Tecnologias](#tecnologias)
+- [Estrutura do Projeto](#estrutura-do-projeto)
+- [Como Rodar](#como-rodar)
+- [Segurança Implementada](#segurança)
+- [Demonstração](#demonstração)
+- [To-do List](#todolist)
+
 Projeto de **aplicativo de delivery cloud-native**, desenvolvido com foco em **arquitetura moderna**, **escalabilidade**, **segurança** e **boas práticas de engenharia de software**, simulando um cenário real de produção utilizado por empresas de médio e grande porte.
 
 O sistema foi projetado utilizando **microserviços**, **comunicação assíncrona**, **containerização**, **orquestração**, **automação de infraestrutura** e **validações robustas**, cobrindo desde backend até frontend web e mobile.
@@ -44,6 +57,13 @@ Cada serviço segue o padrão **MVC**, com:
 - Kubernetes Deployments e Services
 - Bash Scripts para automação
 - Init SQL para versionamento do banco
+
+### Health Checks (Liveness & Readiness)
+Cada serviço expõe o endpoint GET /health que valida:
+
+- O status do processo.
+
+- Uptime: Tempo de atividade do processo.
 
 ---
 
@@ -217,6 +237,7 @@ RABBITMQ_DEFAULT_PASS
 
 📌 Motivo do ajuste:
 Devido a um bug ainda não resolvido envolvendo leitura de arquivos de configuração e inicialização do RabbitMQ.
+(explicação detalhada do bug)
 
 ### 3️⃣ Deploy da aplicação
 Realiza o deploy completo da infraestrutura e dos serviços no Docker Swarm / Kubernetes (dependendo da configuração).
@@ -277,7 +298,8 @@ Roadmap com foco em **escalabilidade**, **experiência do usuário** e **cenári
    - [ ] Rate limiting no envio de e-mails de recuperação  
    - [ ] Auditoria de segurança (tabela de tokens, invalidação após uso)
 
-4. **Sistema de Pagamentos – Fase 1 (MVP)**  
+4. **Sistema de Pagamentos**  
+  - [ ] Integração com Stripe em modo Test (Sandbox)
 
 ## Prioridade Média – Features de Valor Percebido Alto
 
@@ -317,33 +339,6 @@ Legenda: Fluxo principal de criação de pedido (comunicação assíncrona via R
 
 ## 🗄️ Modelo de Dados (Diagrama ER)
 
-<img src="https://raw.githubusercontent.com/SEU_USER/REPO/main/docs/er-diagram.png" width="700" alt="Diagrama Entidade-Relacionamento">
+<img src="./docs/images/ERD.png" width="700" alt="Diagrama Entidade-Relacionamento">
 
 Principais entidades e relacionamentos implementados no PostgreSQL.
-
-## Documentação da API (Swagger/OpenAPI)
-
-A documentação interativa está disponível em:  
-→ http://localhost:3000/api-docs (ao rodar localmente)  
-
-Ou veja alguns endpoints principais:
-
-<img src="https://raw.githubusercontent.com/SEU_USER/REPO/main/docs/swagger-example.png" width="800" alt="Exemplo Swagger – POST /orders">
-
-## Documentação Técnica
-
-<details>
-  <summary> Demonstração Visual (Screenshots & GIFs)</summary>
-  </details>
-
-<details>
-  <summary> Arquitetura do Sistema</summary>
-  </details>
-
-<details>
-  <summary> Modelagem de Dados (ERD)</summary>
-  </details>
-
-<details>
-  <summary> API Reference (Swagger)</summary>
-  </details>
