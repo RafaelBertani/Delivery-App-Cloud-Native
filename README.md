@@ -69,6 +69,8 @@ Cada serviço expõe o endpoint GET /health que valida:
 ### Resumo das portas utilizadas
 | Serviço               | Porta Host | Porta Container |
 |-----------------------|------------|-----------------|
+| Frontend React	      | 8080    	 | 80              |
+| Frontend Flutter	    | 8081	     | 80              |
 | Auth Service          | 3001       | 3001            |
 | Restaurant Service    | 3002       | 3002            |
 | Order Service         | 3003       | 3003            |
