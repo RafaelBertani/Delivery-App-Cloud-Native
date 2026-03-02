@@ -3,8 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-
-// Importando o nosso novo widget!
 import '../widgets/restaurant_card.dart'; 
 
 class SearchPage extends StatefulWidget {
@@ -109,7 +107,7 @@ class _SearchPageState extends State<SearchPage> {
     // 3. Se o token existir, o usuário está logado
     final bool isUserLoggedIn = token != null; 
 
-    // 4. Boa prática no Flutter: verifica se a tela ainda existe antes de navegar após um 'await'
+    // 4. Verifica se a tela ainda existe antes de navegar após um 'await'
     if (!mounted) return;
 
     if (!isUserLoggedIn) {

@@ -332,7 +332,13 @@ Nenhuma restante no momento.
 
 Aqui estão algumas telas do sistema rodando:
 
-[3–5 imagens aqui com <img> ou GitHub markdown]
+<img src="./docs/sample/image1.png" width="800">
+<img src="./docs/sample/image2.png" width="800">
+<img src="./docs/sample/image3.png" width="400">
+<img src="./docs/sample/image4.png" width="800">
+<img src="./docs/sample/image5.png" width="800">
+<img src="./docs/sample/image6.png" width="800">
+<img src="./docs/sample/image7.png" width="400">
 
 # Diagramas UML
 

@@ -1,7 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-// Importe suas páginas
 import 'pages/SignInPage.dart';
 import 'pages/SignUpPage.dart';
 import 'pages/ProfilePage.dart';
@@ -54,126 +55,20 @@ final GoRouter _router = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/',
   routes: [
-    // O ShellRoute cria o layout base (Header + Options + Main) para as rotas filhas
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
       builder: (BuildContext context, GoRouterState state, Widget child) {
-        
-        final mockUser = UserModel(isDelivery: true, hasRestaurant: false);
-        final bool isUserLoggedIn = false; // Simulação de estado de login
-        final String userName = "Rafael"; // Simulação de nome de usuário
-
-        return Scaffold(
-          // O AppBar substitui o <Header /> do React
-          appBar: AppBar(
-            toolbarHeight: 130,
-            backgroundColor: const Color.fromRGBO(174, 10, 10, 1.0),
-            iconTheme: const IconThemeData(color: Colors.white), 
-            
-            // Logo centralizada
-            centerTitle: true,
-            title: Image.asset(
-              'assets/images/genericLogo.png', // <-- Novo caminho limpo
-              height: 80,
-              errorBuilder: (context, error, stackTrace) => const Text('Logo', style: TextStyle(color: Colors.white)), 
-            ),
-
-            // O actions substitui a sua div "box-buttons"
-            actions: [
-              if (isUserLoggedIn) ...[
-                // Div de apresentação
-                Center(
-                  child: Text(
-                    'Olá, $userName',
-                    style: const TextStyle(
-                      color: Colors.white, 
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                
-                // Botão de Sair
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        // Lógica de logout aqui no futuro
-                        context.go('/');
-                      },
-                      icon: const Icon(Icons.logout, color: Colors.black, size: 16),
-                      label: const Text('Sair', style: TextStyle(color: Colors.black)),
-                      style: _btnHeaderStyle(),
-                    ),
-                  ),
-                ),
-              ] else ...[
-                // Botões de Login e Cadastro
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () => context.go('/signIn'),
-                    style: _btnHeaderStyle(),
-                    child: const Text('Login', style: TextStyle(color: Colors.black)),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: ElevatedButton(
-                      onPressed: () => context.go('/signUp'),
-                      style: _btnHeaderStyle(),
-                      child: const Text('Cadastro', style: TextStyle(color: Colors.black)),
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-          
-          drawer: OptionsDrawer(user: mockUser),
-          
-          // Onde as rotas (pages) serão renderizadas, equivalente ao <main> no React
-          body: Container(
-            color: Colors.white, // Substitui a classe "back1"
-            child: child,
-          ),
-        );
+        return MainLayout(child: child);
       },
       routes: [
-        GoRoute(
-          path: '/',
-          builder: (context, state) => const SearchPage(),
-        ),
-        GoRoute(
-          path: '/signIn',
-          builder: (context, state) => const SignInPage(),
-        ),
-        GoRoute(
-          path: '/signUp',
-          builder: (context, state) => const SignUpPage(),
-        ),
-        GoRoute(
-          path: '/search',
-          builder: (context, state) => const SearchPage(),
-        ),
-        GoRoute(
-          path: '/suggested',
-          builder: (context, state) => const SuggestedPage(),
-        ),
-        GoRoute(
-          path: '/profile',
-          builder: (context, state) => const ProfilePage(),
-        ),
-        GoRoute(
-          path: '/settings',
-          builder: (context, state) => const SettingsPage(),
-        ),
-        GoRoute(
-          path: '/my-restaurants',
-          builder: (context, state) => const RestaurantsPage(),
-        ),
+        GoRoute(path: '/', builder: (context, state) => const SearchPage()),
+        GoRoute(path: '/signIn', builder: (context, state) => const SignInPage()),
+        GoRoute(path: '/signUp', builder: (context, state) => const SignUpPage()),
+        GoRoute(path: '/search', builder: (context, state) => const SearchPage()),
+        GoRoute(path: '/suggested', builder: (context, state) => const SuggestedPage()),
+        GoRoute(path: '/profile', builder: (context, state) => const ProfilePage()),
+        GoRoute(path: '/settings', builder: (context, state) => const SettingsPage()),
+        GoRoute(path: '/my-restaurants', builder: (context, state) => const RestaurantsPage()),
         GoRoute(
           path: '/restaurant/:id',
           builder: (context, state) {
@@ -181,14 +76,8 @@ final GoRouter _router = GoRouter(
             return OrderPage(id: id);
           },
         ),
-        GoRoute(
-          path: '/orders-list',
-          builder: (context, state) => const OrderListPage(),
-        ),
-        GoRoute(
-          path: '/delivery-panel',
-          builder: (context, state) => const DeliveryPanelPage(),
-        ),
+        GoRoute(path: '/orders-list', builder: (context, state) => const OrderListPage()),
+        GoRoute(path: '/delivery-panel', builder: (context, state) => const DeliveryPanelPage()),
         GoRoute(
           path: '/my-restaurants/:id/settings',
           builder: (context, state) {
@@ -215,24 +104,128 @@ final GoRouter _router = GoRouter(
   ],
 );
 
-class App extends StatefulWidget {
-  const App({super.key});
+class MainLayout extends StatefulWidget {
+  final Widget child;
+  const MainLayout({super.key, required this.child});
 
   @override
-  State<App> createState() => _AppState();
+  State<MainLayout> createState() => _MainLayoutState();
 }
 
-class _AppState extends State<App> {
+class _MainLayoutState extends State<MainLayout> {
+  bool isUserLoggedIn = false;
+  String userName = "";
 
   @override
   void initState() {
     super.initState();
-    _checkAuthStatus();
+    _loadUserData();
   }
 
-  Future<void> _checkAuthStatus() async {
-    // Lógica futura de autenticação
+  // Lê os dados do SharedPreferences uma única vez ao montar o layout
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userString = prefs.getString('user');
+
+    if (userString != null) {
+      try {
+        final userData = jsonDecode(userString);
+        setState(() {
+          isUserLoggedIn = true;
+          userName = userData['name'] ?? userData['nome'] ?? 'Usuário';
+        });
+      } catch (e) {
+        print('Erro ao decodificar JSON do usuário: $e');
+      }
+    }
   }
+
+  // Função para limpar os dados e sair
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('user'); // Apaga o cache
+    setState(() {
+      isUserLoggedIn = false;
+      userName = "";
+    });
+    if (mounted) {
+      context.go('/'); // Redireciona para a home
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 130,
+        backgroundColor: const Color.fromRGBO(174, 10, 10, 1.0),
+        iconTheme: const IconThemeData(color: Colors.white), 
+        centerTitle: true,
+        title: Image.asset(
+          'assets/images/genericLogo.png',
+          height: 80,
+          errorBuilder: (context, error, stackTrace) => const Text('Logo', style: TextStyle(color: Colors.white)), 
+        ),
+        actions: [
+          if (isUserLoggedIn) ...[
+            Center(
+              child: Text(
+                'Olá, $userName',
+                style: const TextStyle(
+                  color: Colors.white, 
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: ElevatedButton.icon(
+                  onPressed: _logout, // Chama a nova função de logout
+                  icon: const Icon(Icons.logout, color: Colors.black, size: 16),
+                  label: const Text('Sair', style: TextStyle(color: Colors.black)),
+                  style: _btnHeaderStyle(),
+                ),
+              ),
+            ),
+          ] else ...[
+            Center(
+              child: ElevatedButton(
+                onPressed: () => context.go('/signIn'),
+                style: _btnHeaderStyle(),
+                child: const Text('Login', style: TextStyle(color: Colors.black)),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: ElevatedButton(
+                  onPressed: () => context.go('/signUp'),
+                  style: _btnHeaderStyle(),
+                  child: const Text('Cadastro', style: TextStyle(color: Colors.black)),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+      // Instancia a gaveta já arrumada na etapa anterior
+      drawer: const OptionsDrawer(),
+      body: Container(
+        color: Colors.white,
+        child: widget.child, // Aqui as páginas são renderizadas
+      ),
+    );
+  }
+}
+
+// =========================================================================
+// COMPONENTE APP (Raiz)
+// =========================================================================
+class App extends StatelessWidget {
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -58,7 +58,7 @@ class _SignInPageState extends State<SignInPage> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', token);
         await prefs.setString('user', jsonEncode(user));
-
+        print(prefs.getString('user') != null ? 'Valor de user: ${prefs.getString('user')}' : 'Chave "user" não encontrada.');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Login realizado com sucesso!'), backgroundColor: Colors.green),

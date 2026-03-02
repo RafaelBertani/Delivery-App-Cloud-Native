@@ -53,8 +53,6 @@ export default function ManageOrdersPage() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Como o nosso painel só mostra PENDING, PREPARING e PREPARED, 
-      // quando ele for pra DELIVERING, ele simplesmente vai sumir da tela!
       setOrders(prevOrders => 
         prevOrders.map(order => 
           order.id === orderId ? { ...order, status: newStatus } : order
