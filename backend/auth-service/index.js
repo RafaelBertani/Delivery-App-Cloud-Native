@@ -19,5 +19,5 @@ app.get('/api/auth/health', (req, res) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`UserService is running on http://0.0.0.0:${PORT}`);
+  console.log(`auth-service is running on http://0.0.0.0:${PORT}`);
 });

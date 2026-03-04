@@ -19,5 +19,5 @@ app.get('/api/restaurants/health', (req, res) => {
 app.use('/api/restaurants', routes);
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`UserService is running on http://0.0.0.0:${PORT}`);
+  console.log(`restaurant-service is running on http://0.0.0.0:${PORT}`);
 });
