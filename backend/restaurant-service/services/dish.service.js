@@ -72,8 +72,7 @@ async function update(userId, dishId, updates) {
   values.push(dishId); // index + 1
   values.push(userId); // index + 2
 
-  // A Mágica: Fazemos UPDATE no prato (d) MAS verificamos a tabela restaurants (r)
-  // para garantir que o dono do restaurante é o userId.
+  // Faz UPDATE no prato (d) MAS verifica a tabela restaurants (r) para garantir que o dono do restaurante é o userId.
   const query = `
     UPDATE dishes d
     SET ${setClause}
@@ -113,8 +112,7 @@ async function remove(userId, dishId) {
 
 async function findRestaurantDishes(id) {
   // Busca os pratos do restaurante. 
-  // Dica de UX: ORDER BY is_available DESC faz com que os pratos disponíveis 
-  // apareçam primeiro na lista, e os esgotados fiquem no final.
+  // ORDER BY is_available DESC faz com que os pratos disponíveis apareçam primeiro na lista, e os esgotados fiquem no final.
   const query = `
     SELECT 
       id, 

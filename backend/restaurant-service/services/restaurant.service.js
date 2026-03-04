@@ -112,12 +112,11 @@ async function updateRestaurant(restaurantId, ownerId, updates) {
     const res = await pool.query(query, values);
 
     if (res.rowCount === 0) {
-      // Se não atualizou nada, ou o ID não existe ou o usuário não é o dono
       throw new Error('Restaurante não encontrado ou permissão negada.');
     }
 
     // Retorna o objeto atualizado (convertemos a logo de volta para base64 se necessário no futuro, 
-    // mas aqui retornamos sem a logo pesada para economizar banda na resposta de sucesso)
+    // mas aqui retorna sem a logo pesada para economizar banda na resposta de sucesso)
     return res.rows[0];
 
   } catch (error) {

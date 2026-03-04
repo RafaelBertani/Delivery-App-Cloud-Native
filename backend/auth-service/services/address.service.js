@@ -19,7 +19,7 @@ async function getUserAddresses(userId) {
 async function createAddress(userId, addressData) {
   const { name, street, city, state, zip_code, country = 'Brasil' } = addressData;
   
-  // Dica de UX: Se for o primeiro endereço que o usuário cadastra, já colocamos ele como ativo!
+  // Se for o primeiro endereço que o usuário cadastra, já coloca ele como ativo
   const checkRes = await pool.query('SELECT COUNT(*) FROM addresses WHERE user_id = $1', [userId]);
   const isFirstAddress = parseInt(checkRes.rows[0].count) === 0;
 
@@ -65,7 +65,7 @@ async function setActiveAddress(userId, addressId) {
     return res.rows[0];
 
   } catch (error) {
-    // Se deu erro, desfaz a bagunça
+    // Se deu erro, desfaz
     await client.query('ROLLBACK');
     throw error;
   } finally {

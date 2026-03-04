@@ -84,7 +84,7 @@ async function getUserOrders(userId) {
     const res = await pool.query(query, [userId]);
     const orders = res.rows;
 
-    // 2. Para cada pedido, pedimos a info do restaurante via RabbitMQ
+    // 2. Para cada pedido, pede a info do restaurante via RabbitMQ
     // Promise.all para buscar todos em paralelo e ser mais rápido
     const ordersWithRestaurantData = await Promise.all(orders.map(async (order) => {
       try {
@@ -138,7 +138,7 @@ async function getOrdersByRestaurant(restaurantId) {
       
       // 3. Promise.all para buscar os nomes de todos os pratos no RabbitMQ em paralelo!
       order.items = await Promise.all(itemsRes.rows.map(async (item) => {
-        let actualDishName = `Prato #${item.dish_id}`; // Valor por defeito caso o RabbitMQ falhe
+        let actualDishName = `Prato #${item.dish_id}`; // Valor padrão caso o RabbitMQ falhe
         
         try {
           const dishInfo = await rpcClient.requestDishInfo(item.dish_id);

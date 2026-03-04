@@ -53,21 +53,20 @@ async function completeDelivery(orderId, deliveryPersonId, code) {
 async function getActiveDeliveriesByPerson(deliveryPersonId) {
   const query = `
     SELECT o.id, o.restaurant_id, o.total_amount, o.status, 
-           o.delivery_street, o.delivery_city, o.created_at,
-           o.restaurant_address -- (Se já tiver na tabela, senão o populate resolve)
+           o.delivery_street, o.delivery_city, o.created_at
     FROM orders o
     JOIN deliveries d ON o.id = d.order_id
     WHERE d.delivery_person_id = $1 
-      -- ADICIONADO 'PREPARED' AQUI para o motoboy ver a corrida enquanto vai até o restaurante
       AND o.status IN ('PREPARED', 'DELIVERING', 'ARRIVED') 
     ORDER BY d.created_at ASC
   `;
+  
   const res = await pool.query(query, [deliveryPersonId]);
+  
   return await populateRestaurantAddress(res.rows);
 }
 
 async function searchAvailableDeliveries(city) {
-  // ATUALIZADO: Agora busca pedidos PREPARED que AINDA NÃO ESTÃO na tabela deliveries
   const query = `
     SELECT o.id, o.restaurant_id, o.total_amount, o.delivery_street, o.delivery_city, o.created_at
     FROM orders o
@@ -86,22 +85,19 @@ async function acceptDelivery(orderId, deliveryPersonId) {
   try {
     await client.query('BEGIN');
 
-    // 1. Verifica se o pedido está PREPARED e se já não foi pego por outro
-    const checkQuery = `
-      SELECT o.status, d.id as delivery_id 
-      FROM orders o 
-      LEFT JOIN deliveries d ON o.id = d.order_id 
-      WHERE o.id = $1 FOR UPDATE
-    `;
+    // 1. Consulta simples: Tranca apenas a tabela orders
+    const checkQuery = `SELECT status FROM orders WHERE id = $1 FOR UPDATE`;
     const checkRes = await client.query(checkQuery, [orderId]);
     
-    if (checkRes.rows.length === 0) throw new Error('Pedido não encontrado.');
-    if (checkRes.rows[0].status !== 'PREPARED') throw new Error('Este pedido não está pronto.');
-    if (checkRes.rows[0].delivery_id !== null) throw new Error('Este pedido já foi pego por outro entregador.');
+    if (checkRes.rows.length === 0) {
+      throw new Error('Pedido não encontrado.');
+    }
+    if (checkRes.rows[0].status !== 'PREPARED') {
+      throw new Error('Este pedido não está pronto para retirada.');
+    }
 
-    // Removemos o UPDATE orders SET status = 'DELIVERING' daqui, como você pediu!
-
-    // 2. Insere o registo na tabela de deliveries com status WAITING_PICKUP (Aguardando Retirada)
+    // 2. Tenta inserir a entrega. 
+    // Se outro motoboy já pegou, a restrição UNIQUE(order_id) da tabela vai disparar um erro aqui
     const insertDeliveryQuery = `
       INSERT INTO deliveries (order_id, delivery_person_id, status, picked_up_at)
       VALUES ($1, $2, 'WAITING_PICKUP', NULL)
@@ -111,6 +107,12 @@ async function acceptDelivery(orderId, deliveryPersonId) {
     await client.query('COMMIT');
   } catch (error) {
     await client.query('ROLLBACK');
+    
+    // 23505 é o código do PostgreSQL para "Unique Violation" (Duplicidade)
+    if (error.code === '23505') {
+      throw new Error('Ops! Outro entregador acabou de aceitar esta corrida milissegundos antes de você.');
+    }
+    
     throw error;
   } finally {
     client.release();
