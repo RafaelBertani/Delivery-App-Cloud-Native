@@ -1,7 +1,6 @@
 const pool = require('../dbconfig/database-config');
 const rpcClient = require('../rabbitmq/rpcClient');
 
-// Função auxiliar para enriquecer os pedidos com o endereço do restaurante
 async function populateRestaurantAddress(orders) {
   return await Promise.all(orders.map(async (order) => {
     let restAddress = 'Endereço Indisponível';
@@ -22,7 +21,7 @@ async function completeDelivery(orderId, deliveryPersonId, code) {
   try {
     await client.query('BEGIN');
 
-    // 1. Verifica se o código bate e se a entrega é mesmo deste entregador
+    // Verifica se o código bate e se a entrega é mesmo deste entregador
     const checkQuery = `
       SELECT o.delivery_code, d.delivery_person_id 
       FROM orders o
@@ -35,10 +34,10 @@ async function completeDelivery(orderId, deliveryPersonId, code) {
     if (checkRes.rows[0].delivery_person_id !== deliveryPersonId) throw new Error('Você não tem permissão para concluir esta entrega.');
     if (checkRes.rows[0].delivery_code !== code) throw new Error('Código de entrega incorreto.');
 
-    // 2. Atualiza o status do pedido para DELIVERED
+    // Atualiza o status do pedido para DELIVERED
     await client.query("UPDATE orders SET status = 'DELIVERED' WHERE id = $1", [orderId]);
 
-    // 3. Atualiza a tabela de deliveries
+    // Atualiza a tabela de deliveries
     await client.query("UPDATE deliveries SET status = 'DELIVERED', delivered_at = CURRENT_TIMESTAMP WHERE order_id = $1", [orderId]);
 
     await client.query('COMMIT');
@@ -96,7 +95,7 @@ async function acceptDelivery(orderId, deliveryPersonId) {
       throw new Error('Este pedido não está pronto para retirada.');
     }
 
-    // 2. Tenta inserir a entrega. 
+    // Tenta inserir a entrega. 
     // Se outro motoboy já pegou, a restrição UNIQUE(order_id) da tabela vai disparar um erro aqui
     const insertDeliveryQuery = `
       INSERT INTO deliveries (order_id, delivery_person_id, status, picked_up_at)

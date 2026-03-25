@@ -13,7 +13,7 @@ async function createNew(userId, restaurantData) {
     logo // Vem como string base64 do front
   } = restaurantData;
 
-  // 1. Converter Base64 para Buffer (para salvar como BYTEA no Postgres)
+  // Converter Base64 para Buffer (para salvar como BYTEA no Postgres)
   let logoBuffer = null;
   if (logo && logo.includes('base64')) {
     // Remove o cabeçalho "data:image/png;base64,"
@@ -72,17 +72,17 @@ async function findByOwnerId( id ) {
 
 async function updateRestaurant(restaurantId, ownerId, updates) {
   
-  // 1. Tratamento da Imagem (Base64 -> Buffer) se ela estiver nos updates
+  // Tratamento da Imagem (Base64 -> Buffer) se ela estiver nos updates
   if (updates.logo) {
     // Remove o cabeçalho do base64 se existir (ex: "data:image/png;base64,")
     const base64Data = updates.logo.replace(/^data:image\/\w+;base64,/, "");
     updates.logo = Buffer.from(base64Data, 'base64');
   } else if (updates.logo === null || updates.logo === '') {
-    // Se o usuário mandou string vazia ou null explicitamente, salvamos null no banco
+    // Se o usuário mandou string vazia ou null explicitamente
     updates.logo = null;
   }
 
-  // 2. Construção da Query Dinâmica
+  // Construção da Query Dinâmica
   const fields = Object.keys(updates);
   const values = Object.values(updates);
 
@@ -105,9 +105,6 @@ async function updateRestaurant(restaurantId, ownerId, updates) {
     RETURNING id, name, description, street, city, state, zip_code, country, is_open, is_active
   `;
 
-  // console.log("Query:", query); // Debug se precisar
-  // console.log("Values:", values);
-
   try {
     const res = await pool.query(query, values);
 
@@ -115,8 +112,6 @@ async function updateRestaurant(restaurantId, ownerId, updates) {
       throw new Error('Restaurante não encontrado ou permissão negada.');
     }
 
-    // Retorna o objeto atualizado (convertemos a logo de volta para base64 se necessário no futuro, 
-    // mas aqui retorna sem a logo pesada para economizar banda na resposta de sucesso)
     return res.rows[0];
 
   } catch (error) {

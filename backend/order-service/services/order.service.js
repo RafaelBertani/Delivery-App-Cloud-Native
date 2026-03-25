@@ -7,7 +7,7 @@ async function registerOrder(userId, restaurantId, items) {
   try {
     await client.query('BEGIN');
 
-    // --- 1. BUSCA O ENDEREÇO VIA RABBITMQ ---
+    // BUSCA O ENDEREÇO VIA RABBITMQ
     let deliveryAddress;
     try {
       deliveryAddress = await rpcClient.requestUserActiveAddress(userId);
@@ -15,7 +15,7 @@ async function registerOrder(userId, restaurantId, items) {
       throw new Error("Você precisa ter um endereço ativo para fazer um pedido.");
     }
 
-    // 2. Valida restaurante...
+    // Valida restaurante...
     const restCheck = await client.query('SELECT is_open FROM restaurants WHERE id = $1', [restaurantId]);
     if (restCheck.rows.length === 0) throw new Error('Restaurante inválido.');
     if (!restCheck.rows[0].is_open) throw new Error('O restaurante está fechado no momento.');
@@ -23,7 +23,7 @@ async function registerOrder(userId, restaurantId, items) {
     let totalAmount = 0;
     const validatedItems = [];
 
-    // 3. Valida itens e preços...
+    // Valida itens e preços...
     for (const item of items) {
       const dishRes = await client.query('SELECT price, is_available FROM dishes WHERE id = $1 AND restaurant_id = $2', [item.dish_id, restaurantId]);
       if (dishRes.rows.length === 0) throw new Error(`Prato ID ${item.dish_id} inválido.`);
@@ -34,7 +34,7 @@ async function registerOrder(userId, restaurantId, items) {
       validatedItems.push({ dish_id: item.dish_id, quantity: item.quantity, unit_price: realPrice });
     }
 
-    // --- 4. INSERE O CABEÇALHO DO PEDIDO COM O ENDEREÇO COPIADO ---
+    // INSERE O CABEÇALHO DO PEDIDO COM O ENDEREÇO COPIADO
     const orderQuery = `
       INSERT INTO orders (
         user_id, restaurant_id, total_amount, status, 
@@ -47,14 +47,14 @@ async function registerOrder(userId, restaurantId, items) {
       userId, 
       restaurantId, 
       totalAmount,
-      deliveryAddress.street,   // Copiado via RabbitMQ
-      deliveryAddress.city,     // Copiado via RabbitMQ
-      deliveryAddress.state,    // Copiado via RabbitMQ
-      deliveryAddress.zip_code  // Copiado via RabbitMQ
+      deliveryAddress.street,   // Via RabbitMQ
+      deliveryAddress.city,     // Via RabbitMQ
+      deliveryAddress.state,    // Via RabbitMQ
+      deliveryAddress.zip_code  // Via RabbitMQ
     ]);
     const newOrder = orderRes.rows[0];
 
-    // 5. Insere itens...
+    // Insere itens...
     for (const vItem of validatedItems) {
       const itemQuery = `INSERT INTO order_items (order_id, dish_id, quantity, unit_price) VALUES ($1, $2, $3, $4)`;
       await client.query(itemQuery, [newOrder.id, vItem.dish_id, vItem.quantity, vItem.unit_price]);
@@ -72,7 +72,7 @@ async function registerOrder(userId, restaurantId, items) {
 }
 
 async function getUserOrders(userId) {
-  // 1. Busca APENAS os dados da tabela orders (Sem JOIN)
+  // Busca APENAS os dados da tabela orders (Sem JOIN)
   const query = `
     SELECT id, restaurant_id, total_amount, status, created_at, delivery_code 
     FROM orders 
@@ -84,7 +84,7 @@ async function getUserOrders(userId) {
     const res = await pool.query(query, [userId]);
     const orders = res.rows;
 
-    // 2. Para cada pedido, pede a info do restaurante via RabbitMQ
+    // Para cada pedido, pede a info do restaurante via RabbitMQ
     // Promise.all para buscar todos em paralelo e ser mais rápido
     const ordersWithRestaurantData = await Promise.all(orders.map(async (order) => {
       try {
@@ -127,7 +127,7 @@ async function getOrdersByRestaurant(restaurantId) {
 
     if (orders.length === 0) return [];
 
-    // 2. Para cada pedido, vamos buscar os itens
+    // Para cada pedido, vamos buscar os itens
     for (let order of orders) {
       const itemsQuery = `
         SELECT dish_id, quantity, unit_price
@@ -136,7 +136,7 @@ async function getOrdersByRestaurant(restaurantId) {
       `;
       const itemsRes = await pool.query(itemsQuery, [order.id]);
       
-      // 3. Promise.all para buscar os nomes de todos os pratos no RabbitMQ em paralelo!
+      // Promise.all para buscar os nomes de todos os pratos no RabbitMQ em paralelo
       order.items = await Promise.all(itemsRes.rows.map(async (item) => {
         let actualDishName = `Prato #${item.dish_id}`; // Valor padrão caso o RabbitMQ falhe
         

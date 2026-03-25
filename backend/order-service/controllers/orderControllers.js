@@ -6,13 +6,13 @@ async function createOrder(req, res) {
   try {
     const userId = req.user.sub;
     
-    // 1. Validação do JSON de entrada
+    // Validação do JSON de entrada
     const { error, value } = createOrderSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
 
-    // 2. Passa para o Service
+    // Passa para o Service
     const newOrder = await orderService.registerOrder(userId, value.restaurant_id, value.items);
 
     return res.status(201).json({
