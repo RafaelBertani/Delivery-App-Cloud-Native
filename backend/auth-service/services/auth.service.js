@@ -90,7 +90,7 @@ async function loginUser({ email, password }) {
 
 async function updateUser(userId, updates) {
   try {
-    // Isso impede que alguém envie { "role": "ADMIN" } e vire admin
+    // Impede que alguém envie { "role": "ADMIN" } e vire admin
     const allowedFields = ['name', 'email', 'password', 'profile_pic', 'is_delivery', 'has_restaurant'];
     const keys = Object.keys(updates).filter(key => allowedFields.includes(key));
 

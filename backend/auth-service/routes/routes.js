@@ -14,12 +14,11 @@ router.get('/status', (req, res) => {
   res.json({ status: getStatus(code) });
 });
 
-// 🔓 Públicas
+// Públicas
 router.post('/signup', authController.signup);
 router.post('/signin', authController.signin);
-router.put('/edit', authMiddleware, authController.editUser);
 
-// 🔐 Protegidas
+// Protegidas
 router.get('/me', authMiddleware, authController.me);
 router.get('/private', authMiddleware, (req, res) => {
   res.json({
@@ -27,6 +26,7 @@ router.get('/private', authMiddleware, (req, res) => {
     user: req.user
   });
 });
+router.put('/edit', authMiddleware, authController.editUser);
 router.get('/addresses', authMiddleware, addressController.getAddresses);
 router.post('/addresses', authMiddleware, addressController.createAddress);
 router.put('/addresses/:id/active', authMiddleware, addressController.setActiveAddress); //dinâmica
