@@ -10,14 +10,14 @@ const jwt = require('jsonwebtoken');
 async function signup(req, res) {
   const { name, email, password, confirmPassword } = req.body;
 
-  const { error } = registerSchema.validate(
+  const { error: validationError } = registerSchema.validate(
     { name, email, password, confirmPassword },
     { abortEarly: true }
   );
 
-  if (error) {
+  if (validationError) {
     return res.status(400).json({
-      message: error.details[0].message
+      message: validationError.details[0].message
     });
   }
 
@@ -46,14 +46,14 @@ async function signup(req, res) {
 async function signin(req, res) {
   const { email, password } = req.body;
 
-  const { error } = loginSchema.validate(
+  const { error: validationError } = loginSchema.validate(
     { email, password },
     { abortEarly: true }
   );
 
-  if (error) {
+  if (validationError) {
     return res.status(400).json({
-      message: error.details[0].message
+      message: validationError.details[0].message
     });
   }
 
@@ -69,7 +69,6 @@ async function signin(req, res) {
 
     const user = result.user;
 
-    // Payload mínimo e seguro
     const payload = {
       sub: user.id,
       role: user.role,

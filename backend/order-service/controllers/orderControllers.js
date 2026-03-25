@@ -4,7 +4,7 @@ const { createOrderSchema } = require('../validations/createOrder.schema.js');
 
 async function createOrder(req, res) {
   try {
-    const userId = req.user.sub; // Pegamos o ID de quem está comprando pelo Token
+    const userId = req.user.sub;
     
     // 1. Validação do JSON de entrada
     const { error, value } = createOrderSchema.validate(req.body);
