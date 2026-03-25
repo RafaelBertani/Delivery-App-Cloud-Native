@@ -17,7 +17,7 @@ async function createUser({ name, email, password }) {
     const insertQuery = `
       INSERT INTO users (name, email, password, role)
       VALUES ($1, $2, $3, $4)
-      RETURNING id, name, email, profile_pic, role
+      RETURNING id, name, email, role
     `;
 
     const insertValues = [name, email, hashedPassword, role];
@@ -102,7 +102,6 @@ async function updateUser(userId, updates) {
       updates.password = await bcrypt.hash(updates.password, 10);
     }
 
-    // Exemplo: Se vier { name: 'Ana' }, vira "UPDATE users SET name = $1 WHERE id = $2"
     const setClause = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
     const values = keys.map(key => updates[key]);
     

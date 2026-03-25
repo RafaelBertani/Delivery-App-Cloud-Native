@@ -11,7 +11,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  // O FormKey é como o Joi no Flutter, ele gerencia o estado de validação de todo o formulário
+  // FormKey, validação de todo o formulário
   final _formKey = GlobalKey<FormState>();
 
   // Controllers substituem o "useState" para os inputs
