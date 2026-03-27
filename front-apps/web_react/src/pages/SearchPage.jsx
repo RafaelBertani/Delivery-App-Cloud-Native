@@ -17,7 +17,6 @@ export default function SearchPage() {
   const [error, setError] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
 
-  // Opcional: Carrega algumas sugestões ao abrir a tela antes de pesquisar
   useEffect(() => {
     let isMounted = true;
     async function fetchInitial() {
@@ -40,7 +39,7 @@ export default function SearchPage() {
 
   // Função disparada ao clicar em Buscar ou apertar Enter
   const handleSearch = async (e) => {
-    e.preventDefault(); // Evita recarregar a página
+    e.preventDefault();
     
     if (!searchTerm.trim()) {
       return; // Não faz nada se a barra estiver vazia

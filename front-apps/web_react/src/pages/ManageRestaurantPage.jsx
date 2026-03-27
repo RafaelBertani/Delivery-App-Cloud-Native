@@ -16,7 +16,7 @@ export default function ManageRestaurantPage() {
   
   const [logoPreview, setLogoPreview] = useState(DEFAULT_LOGO);
 
-  // 1. Adicionamos o is_open no estado inicial
+  // Adicionamos o is_open no estado inicial
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -44,7 +44,7 @@ export default function ManageRestaurantPage() {
         if (isMounted) {
           const data = response.data;
           
-          // 2. Preenche o is_open com o que veio do banco
+          // Preenche o is_open com o que veio do banco
           setFormData({
             name: data.name || '',
             description: data.description || '',

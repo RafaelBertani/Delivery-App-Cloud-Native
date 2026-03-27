@@ -35,11 +35,9 @@ export default function ManageOrdersPage() {
     }
   };
 
-  // Função genérica para avançar o status do pedido
   const handleUpdateStatus = async (orderId, newStatus) => {
     const token = localStorage.getItem('token');
     
-    // --- NOVO: Adiciona confirmação se o novo status for DELIVERING ---
     if (newStatus === 'DELIVERING') {
       const isConfirmed = window.confirm("O entregador informou o código correto e retirou o pedido?");
       if (!isConfirmed) return; // Se ele cancelar, não faz nada.

@@ -24,7 +24,7 @@ export default function SettingsPage() {
 
   // Função para alternar configurações que dependem do Servidor
   const handleServerToggle = async (field, currentValue) => {
-    // 1. Confirmação antes de mudar
+    // Confirmação antes de mudar
     const label = field === 'is_delivery' ? 'Entregador' : 'Dono de Restaurante';
     const action = currentValue ? 'desativar' : 'ativar';
     
@@ -37,7 +37,7 @@ export default function SettingsPage() {
     try {
       setLoading(true);
 
-      // 2. Requisição ao Servidor (envia o valor inverso do atual)
+      // Requisição ao Servidor (envia o valor inverso do atual)
       const newValue = !currentValue;
       
       const response = await axios.put('http://localhost:3001/api/auth/edit', 
@@ -47,7 +47,7 @@ export default function SettingsPage() {
         }
       );
 
-      // 3. Atualiza o Contexto e o LocalStorage (via AuthContext)
+      // Atualiza o Contexto e o LocalStorage (via AuthContext)
       // O backend retorna o objeto user completo atualizado
       const userAtualizado = response.data.user;
       updateUserProfile(userAtualizado);

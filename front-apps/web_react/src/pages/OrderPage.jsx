@@ -19,7 +19,7 @@ export default function OrderPage() {
 
   const [cart, setCart] = useState({});
 
-  // 1. Busca os Dados (Restaurante + Pratos)
+  // Busca os Dados (Restaurante + Pratos)
   useEffect(() => {
     let isMounted = true;
 
@@ -49,7 +49,7 @@ export default function OrderPage() {
     return () => { isMounted = false; };
   }, [id]);
 
-  // 2. Funções do Carrinho
+  // Funções do Carrinho
   const handleAdd = (dishId) => {
     setCart(prev => ({
       ...prev,
@@ -69,7 +69,7 @@ export default function OrderPage() {
     });
   };
 
-  // 3. Cálculos do Carrinho
+  // Cálculos do Carrinho
   const cartTotal = dishes.reduce((total, dish) => {
     const quantity = cart[dish.id] || 0;
     return total + (parseFloat(dish.price) * quantity);
@@ -77,7 +77,7 @@ export default function OrderPage() {
 
   const totalItems = Object.values(cart).reduce((sum, qtd) => sum + qtd, 0);
 
-  // 4. Finalizar Pedido
+  // Finalizar Pedido
   const handleCheckout = async () => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -104,9 +104,6 @@ export default function OrderPage() {
     try {
       setIsCheckingOut(true);
       
-      // ==========================================
-      // NOVA VALIDAÇÃO PROATIVA DE ENDEREÇO
-      // ==========================================
       try {
         const addressRes = await axios.get('http://localhost:3001/api/auth/addresses', {
           headers: { Authorization: `Bearer ${token}` }
@@ -127,8 +124,7 @@ export default function OrderPage() {
         setIsCheckingOut(false);
         return;
       }
-      // ==========================================
-
+      
       // Dispara a requisição para criar o pedido (só chega aqui se tiver endereço ativo)
       const response = await axios.post('http://localhost:3003/api/orders/create', payload, {
         headers: { Authorization: `Bearer ${token}` }

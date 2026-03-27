@@ -30,7 +30,6 @@ export default function DishesPage() {
   };
   const [formData, setFormData] = useState(initialFormState);
 
-  // --- 1. CARREGAR PRATOS (Rota: /list-dishes) ---
   useEffect(() => {
     let isMounted = true;
     fetchDishes();
@@ -53,7 +52,6 @@ export default function DishesPage() {
     return () => { isMounted = false; };
   }, [restaurantId, navigate]);
 
-  // --- 2. MANIPULAÇÃO DO FORMULÁRIO ---
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -82,7 +80,6 @@ export default function DishesPage() {
     setEditingId(null);
   };
 
-  // --- 3. ENVIAR (Rota: /create-dish ou /edit-dish) ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
@@ -90,13 +87,11 @@ export default function DishesPage() {
 
     try {
       if (isEditing) {
-        // EDITAR: /api/restaurants/edit-dish/:id
         await axios.patch(`http://localhost:3002/api/restaurants/edit-dish/${editingId}`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
         alert("Prato atualizado com sucesso!");
       } else {
-        // CRIAR: /api/restaurants/:id/create-dish
         await axios.post(`http://localhost:3002/api/restaurants/${restaurantId}/create-dish`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -114,8 +109,6 @@ export default function DishesPage() {
       setSubmitting(false);
     }
   };
-
-  // --- 4. AÇÕES NOS CARDS ---
   
   const handleEditClick = (dish) => {
     setIsEditing(true);
@@ -142,7 +135,6 @@ export default function DishesPage() {
     setDishes(updatedDishes);
 
     try {
-      // CORRIGIDO: /api/restaurants/edit-dish/:id
       await axios.patch(`http://localhost:3002/api/restaurants/edit-dish/${dish.id}`, 
         { is_available: newState }, 
         { headers: { Authorization: `Bearer ${token}` } }
@@ -154,12 +146,10 @@ export default function DishesPage() {
     }
   };
 
-  // Deletar (Rota: /delete-dish)
   const handleDelete = async (id) => {
     if(!window.confirm("Tem certeza que deseja excluir este prato?")) return;
     const token = localStorage.getItem('token');
     try {
-        // CORRIGIDO: /api/restaurants/delete-dish/:id
         await axios.delete(`http://localhost:3002/api/restaurants/delete-dish/${id}`, {
             headers: { Authorization: `Bearer ${token}` }
         });

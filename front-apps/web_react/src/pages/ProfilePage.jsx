@@ -33,14 +33,12 @@ export default function ProfilePage() {
     }
   }, [user, navigate]);
 
-  // ==========================================
-  // FUNÇÕES DE PERFIL (Mantidas intactas)
-  // ==========================================
   async function saveToBackend(field, value) {
     const token = localStorage.getItem('token');
     if (!token) { navigate('/signIn'); return false; }
 
     try {
+
       setLoading(true);
       const response = await axios.put('http://localhost:3001/api/auth/edit', 
         { [field]: value }, 
@@ -49,7 +47,9 @@ export default function ProfilePage() {
       updateUserProfile(response.data.user);
       setLoading(false);
       return true; 
+
     } catch (error) {
+
       setLoading(false);
       console.error(error);
       if (error.response?.status === 401) {
@@ -59,7 +59,8 @@ export default function ProfilePage() {
       } else {
         alert(error.response?.data?.message || "Erro ao atualizar perfil.");
       }
-      return false; 
+      return false;
+
     }
   }
 
@@ -99,12 +100,7 @@ export default function ProfilePage() {
     if (success) setEditingField(null); 
   }
 
-
-  // ==========================================
-  // NOVAS FUNÇÕES DE ENDEREÇO
-  // ==========================================
-  
-  // 1. Buscar endereços
+  // Buscar endereços
   async function fetchAddresses() {
     const token = localStorage.getItem('token');
     try {
@@ -120,7 +116,7 @@ export default function ProfilePage() {
     }
   }
 
-  // 2. Salvar novo endereço
+  // Salvar novo endereço
   async function handleSaveAddress(e) {
     e.preventDefault();
     const token = localStorage.getItem('token');
@@ -140,11 +136,10 @@ export default function ProfilePage() {
     }
   }
 
-  // 3. Ativar um endereço (o backend deve desativar os outros)
+  // Ativar um endereço (o backend deve desativar os outros)
   async function handleToggleActive(addressId) {
     const token = localStorage.getItem('token');
     
-    // Atualização Otimista: Atualiza a tela antes mesmo de o backend responder para parecer instantâneo
     setAddresses(prev => prev.map(addr => ({
       ...addr,
       is_active: addr.id === addressId
@@ -156,7 +151,7 @@ export default function ProfilePage() {
       });
     } catch (err) {
       console.error("Erro ao ativar endereço:", err);
-      fetchAddresses(); // Se der erro, desfaz a atualização otimista buscando do banco de novo
+      fetchAddresses();
     }
   }
 
