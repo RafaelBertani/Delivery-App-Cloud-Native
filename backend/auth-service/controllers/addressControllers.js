@@ -1,4 +1,3 @@
-const axios = require('axios');
 const addressService = require('../services/address.service');
 
 async function getAddresses(req, res) {

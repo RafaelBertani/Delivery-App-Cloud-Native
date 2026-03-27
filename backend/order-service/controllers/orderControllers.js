@@ -1,4 +1,3 @@
-const axios = require('axios');
 const orderService = require('../services/order.service.js');
 const { createOrderSchema } = require('../validations/createOrder.schema.js');
 

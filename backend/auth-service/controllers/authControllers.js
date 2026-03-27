@@ -1,6 +1,3 @@
-const axios = require('axios');
-const Joi = require('joi');
-//const { getAll, findByEmail, emailExists, addUser, findUsersByCode, addAdminCodeToUser, addNonAdminCodeToUser } = require('./users');
 const registerSchema = require('../validations/register.schema.js');
 const loginSchema = require('../validations/login.schema.js');
 const userService = require('../services/auth.service.js');

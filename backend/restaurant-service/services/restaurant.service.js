@@ -1,5 +1,4 @@
 const pool = require('../dbconfig/database-config');
-const bcrypt = require('bcrypt');
 
 async function createNew(userId, restaurantData) {
   const { 

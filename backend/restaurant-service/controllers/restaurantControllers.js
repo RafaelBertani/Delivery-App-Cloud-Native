@@ -1,5 +1,3 @@
-const axios = require('axios');
-const Joi = require('joi');
 const restaurantSchema = require('../validations/restaurant.schema.js');
 const restaurantUpdateSchema = require('../validations/restaurantUpdate.schema.js');
 const restaurantService = require('../services/restaurant.service.js');
