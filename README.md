@@ -201,18 +201,12 @@ Scripts Bash automatizam:
 - Deploy em Docker Swarm e Kubernetes  
 - Monitoramento dos serviços  
 
-### Objetivo
-
-Reduzir erro humano e garantir reprodutibilidade do ambiente.
-
 ---
 
 ## Docker Swarm e Kubernetes
 
 - Docker Swarm: simplicidade e secrets nativos  
 - Kubernetes: padrão de mercado, escalabilidade e alta disponibilidade  
-
-O projeto suporta ambos, demonstrando flexibilidade e entendimento de ambientes reais.
 
 ## Como Rodar o Projeto
 
